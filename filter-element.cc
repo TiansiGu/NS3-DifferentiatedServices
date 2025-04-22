@@ -1,17 +1,97 @@
-#ifndef FILTER_ELEMENT_H
-#define FILTER_ELEMENT_H
+#include "filter-element.h"
 
-#include "ns3/packet.h"
-#include "ns3/ptr.h"
-
-class FilterElement
+namespace ns3
 {
-  public:
-    /* Virtual Destructor */
-    virtual ~FilterElement() = default;
 
-    /* Mark the method as not changing member variables and abstract */
-    virtual bool match(ns3::Ptr<ns3::Packet> p) const = 0;
-};
+bool
+SourceIPAddress::match(Ptr<Packet> p) const
+{
+    Ipv4Header header;
+    if (p->PeekHeader(header))
+    {
+        return header.GetSource() == value;
+    }
+    return false;
+}
 
-#endif // FILTER_ELEMENT_H
+bool
+SourceMask::match(Ptr<Packet> p) const
+{
+    Ipv4Header header;
+    if (p->PeekHeader(header))
+    {
+        Ipv4Address src = header.GetSource();
+        return src.CombineMask(value) == addr.CombineMask(value);
+    }
+    return false;
+}
+
+bool
+SourcePortNumber::match(Ptr<Packet> p) const
+{
+    UdpHeader udp;
+    TcpHeader tcp;
+
+    if (p->PeekHeader(udp))
+    {
+        return udp.GetSourcePort() == value;
+    }
+    else if (p->PeekHeader(tcp))
+    {
+        return tcp.GetSourcePort() == value;
+    }
+    return false;
+}
+
+bool
+DestinationIPAddress::match(Ptr<Packet> p) const
+{
+    Ipv4Header header;
+    if (p->PeekHeader(header))
+    {
+        return header.GetDestination() == value;
+    }
+    return false;
+}
+
+bool
+DestinationMask::match(Ptr<Packet> p) const
+{
+    Ipv4Header header;
+    if (p->PeekHeader(header))
+    {
+        Ipv4Address dst = header.GetDestination();
+        return dst.CombineMask(value) == addr.CombineMask(value);
+    }
+    return false;
+}
+
+bool
+DestinationPortNumber::match(Ptr<Packet> p) const
+{
+    UdpHeader udp;
+    TcpHeader tcp;
+
+    if (p->PeekHeader(udp))
+    {
+        return udp.GetDestinationPort() == value;
+    }
+    else if (p->PeekHeader(tcp))
+    {
+        return tcp.GetDestinationPort() == value;
+    }
+    return false;
+}
+
+bool
+ProtocolNumber::match(Ptr<Packet> p) const
+{
+    Ipv4Header header;
+    if (p->PeekHeader(header))
+    {
+        return header.GetProtocol() == value;
+    }
+    return false;
+}
+
+} // namespace ns3
