@@ -4,11 +4,11 @@ namespace ns3
 {
 
 bool
-Filter::match(Ptr<Packet> p) const
+Filter::Match(Ptr<Packet> p) const
 {
     for (FilterElement* element : elements)
     {
-        if (!element->match(p))
+        if (!element->Match(p))
             return false;
     }
     return true;

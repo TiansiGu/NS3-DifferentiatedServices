@@ -4,7 +4,7 @@ namespace ns3
 {
 
 bool
-SourceIPAddress::match(Ptr<Packet> p) const
+SourceIPAddress::Match(Ptr<Packet> p) const
 {
     Ipv4Header header;
     if (p->PeekHeader(header))
@@ -15,7 +15,7 @@ SourceIPAddress::match(Ptr<Packet> p) const
 }
 
 bool
-SourceMask::match(Ptr<Packet> p) const
+SourceMask::Match(Ptr<Packet> p) const
 {
     Ipv4Header header;
     if (p->PeekHeader(header))
@@ -27,7 +27,7 @@ SourceMask::match(Ptr<Packet> p) const
 }
 
 bool
-SourcePortNumber::match(Ptr<Packet> p) const
+SourcePortNumber::Match(Ptr<Packet> p) const
 {
     UdpHeader udp;
     TcpHeader tcp;
@@ -44,7 +44,7 @@ SourcePortNumber::match(Ptr<Packet> p) const
 }
 
 bool
-DestinationIPAddress::match(Ptr<Packet> p) const
+DestinationIPAddress::Match(Ptr<Packet> p) const
 {
     Ipv4Header header;
     if (p->PeekHeader(header))
@@ -55,7 +55,7 @@ DestinationIPAddress::match(Ptr<Packet> p) const
 }
 
 bool
-DestinationMask::match(Ptr<Packet> p) const
+DestinationMask::Match(Ptr<Packet> p) const
 {
     Ipv4Header header;
     if (p->PeekHeader(header))
@@ -67,7 +67,7 @@ DestinationMask::match(Ptr<Packet> p) const
 }
 
 bool
-DestinationPortNumber::match(Ptr<Packet> p) const
+DestinationPortNumber::Match(Ptr<Packet> p) const
 {
     UdpHeader udp;
     TcpHeader tcp;
@@ -84,7 +84,7 @@ DestinationPortNumber::match(Ptr<Packet> p) const
 }
 
 bool
-ProtocolNumber::match(Ptr<Packet> p) const
+ProtocolNumber::Match(Ptr<Packet> p) const
 {
     Ipv4Header header;
     if (p->PeekHeader(header))

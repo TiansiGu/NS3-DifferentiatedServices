@@ -1,0 +1,40 @@
+#include "traffic-class.h"
+
+namespace ns3
+{
+
+bool
+TrafficClass::Enqueue(Ptr<ns3::Packet> p)
+{
+    if (packets == maxPackets)
+        return false;
+
+    m_queue.push(p);
+    packets++;
+    return true;
+}
+
+Ptr<Packet>
+TrafficClass::Dequeue()
+{
+    if (packets == 0)
+        return nullptr;
+
+    Ptr<Packet> p = m_queue.front();
+    m_queue.pop();
+    packets--;
+    return p;
+}
+
+bool
+TrafficClass::Match(Ptr<Packet> p) const
+{
+    for (Filter* filter : filters)
+    {
+        if (filter->Match(p))
+            return true;
+    }
+    return false;
+}
+
+} // namespace ns3

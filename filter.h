@@ -22,7 +22,7 @@ class Filter
     std::vector<FilterElement*> elements;
 
   public:
-    bool match(ns3::Ptr<ns3::Packet> p) const;
+    bool Match(ns3::Ptr<ns3::Packet> p) const;
 };
 
 } // namespace ns3
