@@ -26,6 +26,8 @@ class TrafficClass
     std::vector<Filter*> filters;         // a collection of Filters
 
   public:
+    bool IsDefault() const;
+
     bool Enqueue(Ptr<ns3::Packet> p);
 
     Ptr<ns3::Packet> Dequeue();

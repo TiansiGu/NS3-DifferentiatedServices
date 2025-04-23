@@ -2,6 +2,11 @@
 
 namespace ns3
 {
+bool
+TrafficClass::IsDefault() const
+{
+    return isDefault;
+}
 
 bool
 TrafficClass::Enqueue(Ptr<ns3::Packet> p)
