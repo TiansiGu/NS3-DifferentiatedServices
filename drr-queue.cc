@@ -1,5 +1,7 @@
 #include "drr-queue.h"
+
 #include "ns3/log.h"
+
 #include <fstream>
 #include <sstream>
 
@@ -17,14 +19,14 @@ TypeId
 DrrQueue::GetTypeId()
 {
     static TypeId tid = TypeId("ns3::DrrQueue")
-        .SetParent<DiffServ>()
-        .SetGroupName("Network")
-        .AddConstructor<DrrQueue>()
-        .AddAttribute("Config",
-                      "Path to DRR configuration file",
-                      StringValue(""),
-                      MakeStringAccessor(&DrrQueue::m_configFile),
-                      MakeStringChecker());
+                            .SetParent<DiffServ>()
+                            .SetGroupName("Network")
+                            .AddConstructor<DrrQueue>()
+                            .AddAttribute("Config",
+                                          "Path to DRR configuration file",
+                                          StringValue(""),
+                                          MakeStringAccessor(&DrrQueue::m_configFile),
+                                          MakeStringChecker());
     return tid;
 }
 
@@ -36,9 +38,8 @@ DrrQueue::DoInitialize()
         LoadQuantumConfigFromFile(m_configFile);
     }
     m_deficitCounters.resize(m_quantums.size(), 0);
-    DiffServ::DoInitialize();
+    // DiffServ::DoInitialize();
 }
-
 
 void
 DrrQueue::LoadQuantumConfigFromFile(const std::string& filename)
@@ -110,22 +111,19 @@ DrrQueue::Schedule()
                 if (p && p->GetSize() <= m_deficitCounters[i])
                 {
                     m_deficitCounters[i] -= p->GetSize();
-                    m_currentIndex = (i + 1) % n; 
+                    m_currentIndex = (i + 1) % n;
                     return classes[i]->Dequeue();
                 }
             }
-            
         }
 
         if (!anyQueueHasPacket)
         {
             return nullptr; // no packets
         }
-        
-        // if not enough deficit, try next round
 
+        // if not enough deficit, try next round
     }
 }
-
 
 } // namespace ns3

@@ -22,6 +22,8 @@ class StrictPriorityQueue : public DiffServ
     Ptr<Packet> Schedule() override;
 
     uint32_t Classify(Ptr<Packet> p) override;
+
+    void AddTrafficClass(TrafficClass* trafficClass) override;
 };
 
 } // namespace ns3

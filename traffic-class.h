@@ -37,6 +37,10 @@ class TrafficClass
     uint32_t GetPackets() const;
 
     Ptr<ns3::Packet> Peek() const;
+
+    uint32_t GetPackets() const;
+
+    uint32_t GetPriorityLevel() const;
 };
 
 } // namespace ns3

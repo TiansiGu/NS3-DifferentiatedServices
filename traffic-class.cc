@@ -57,4 +57,10 @@ TrafficClass::Peek() const
     return m_queue.front();
 }
 
+uint32_t
+TrafficClass::GetPriorityLevel() const
+{
+    return priorityLevel;
+}
+
 } // namespace ns3

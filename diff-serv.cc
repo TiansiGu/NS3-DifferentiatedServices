@@ -17,10 +17,22 @@ DiffServ::Dequeue()
     return Schedule();
 }
 
+Ptr<const Packet>
+DiffServ::Peek() const
+{
+    return nullptr;
+}
+
 Ptr<Packet>
 DiffServ::Remove()
 {
     return Schedule();
+}
+
+std::vector<TrafficClass*>&
+DiffServ::GetTrafficClasses()
+{
+    return q_class;
 }
 
 const std::vector<TrafficClass*>&
@@ -29,4 +41,16 @@ DiffServ::GetTrafficClasses() const
     return q_class;
 }
 
+void
+DiffServ::AddTrafficClass(TrafficClass* trafficClass)
+{
+    q_class.push_back(trafficClass);
+}
+
 } // namespace ns3
+
+int
+main()
+{
+    return 0;
+}

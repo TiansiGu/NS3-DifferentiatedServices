@@ -5,7 +5,7 @@ namespace ns3
 u_int32_t
 StrictPriorityQueue::Classify(Ptr<Packet> p)
 {
-    const std::vector<TrafficClass*> q_class = GetTrafficClasses();
+    const auto& q_class = GetTrafficClasses();
     for (int i = 0; i < q_class.size(); i++)
     {
         TrafficClass* queue_class = q_class[i];
@@ -29,7 +29,8 @@ StrictPriorityQueue::Classify(Ptr<Packet> p)
 Ptr<Packet>
 StrictPriorityQueue::Schedule()
 {
-    for (TrafficClass* queue_class : GetTrafficClasses())
+    const auto& q_class = GetTrafficClasses();
+    for (TrafficClass* queue_class : q_class)
     {
         if (queue_class->GetPackets() > 0)
         {
@@ -38,6 +39,17 @@ StrictPriorityQueue::Schedule()
     }
 
     return nullptr;
+}
+
+void
+StrictPriorityQueue::AddTrafficClass(TrafficClass* trafficClass)
+{
+    DiffServ::AddTrafficClass(trafficClass);
+
+    auto& q_class = GetTrafficClasses();
+    std::sort(q_class.begin(), q_class.end(), [](const TrafficClass* a, const TrafficClass* b) {
+        return a->GetPriorityLevel() > b->GetPriorityLevel(); // descending order
+    });
 }
 
 } // namespace ns3

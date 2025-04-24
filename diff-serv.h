@@ -28,14 +28,17 @@ class DiffServ : public Queue<Packet>
 
     Ptr<Packet> Remove() override;
 
-    Ptr<const Packet> Peek() const = 0;
+    Ptr<const Packet> Peek() const;
 
     virtual Ptr<Packet> Schedule() = 0; // abstract method
 
     virtual uint32_t Classify(Ptr<Packet> p) = 0; // abstract method
 
+    virtual void AddTrafficClass(TrafficClass* trafficClass);
+
   protected:
-    const std::vector<TrafficClass*>& GetTrafficClasses() const;
+    std::vector<TrafficClass*>& GetTrafficClasses();             // for write
+    const std::vector<TrafficClass*>& GetTrafficClasses() const; // for read
 };
 
 } // namespace ns3
