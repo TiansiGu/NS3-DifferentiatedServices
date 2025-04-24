@@ -23,15 +23,10 @@ DiffServ::Remove()
     return Schedule();
 }
 
-Ptr<const Packet>
-DiffServ::Peek() const
+const std::vector<TrafficClass*>&
+DiffServ::GetTrafficClasses() const
 {
+    return q_class;
 }
 
 } // namespace ns3
-
-int
-main()
-{
-    return 0;
-}

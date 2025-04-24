@@ -42,4 +42,10 @@ TrafficClass::Match(Ptr<Packet> p) const
     return false;
 }
 
+uint32_t
+TrafficClass::GetPackets() const
+{
+    return packets;
+}
+
 } // namespace ns3

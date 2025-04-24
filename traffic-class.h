@@ -33,6 +33,8 @@ class TrafficClass
     Ptr<ns3::Packet> Dequeue();
 
     bool Match(Ptr<ns3::Packet> p) const;
+
+    u_int32_t GetPackets() const;
 };
 
 } // namespace ns3
