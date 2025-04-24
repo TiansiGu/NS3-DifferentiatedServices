@@ -48,4 +48,13 @@ TrafficClass::GetPackets() const
     return packets;
 }
 
+Ptr<Packet>
+TrafficClass::Peek() const
+{
+    if (packets == 0)
+        return nullptr;
+
+    return m_queue.front();
+}
+
 } // namespace ns3

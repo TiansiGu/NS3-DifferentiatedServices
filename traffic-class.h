@@ -34,7 +34,9 @@ class TrafficClass
 
     bool Match(Ptr<ns3::Packet> p) const;
 
-    u_int32_t GetPackets() const;
+    uint32_t GetPackets() const;
+
+    Ptr<ns3::Packet> Peek() const;
 };
 
 } // namespace ns3
