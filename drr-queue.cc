@@ -1,14 +1,14 @@
 #include "drr-queue.h"
-
+#include "ns3/string.h"
 #include "ns3/log.h"
 
 #include <fstream>
 #include <sstream>
 
+// NS_LOG_COMPONENT_DEFINE("DrrQueue");
+
 namespace ns3
 {
-
-NS_LOG_COMPONENT_DEFINE("DrrQueue");
 
 DrrQueue::DrrQueue()
     : m_currentIndex(0)
@@ -47,7 +47,9 @@ DrrQueue::LoadQuantumConfigFromFile(const std::string& filename)
     std::ifstream file(filename);
     if (!file.is_open())
     {
-        NS_LOG_ERROR("Cannot open DRR config file: " << filename);
+        // NS_LOG_ERROR("Cannot open DRR config file: " << filename);
+        // NS_LOG_LOGIC("Cannot open DRR config file: " << filename);
+
         return;
     }
 
@@ -63,7 +65,9 @@ DrrQueue::LoadQuantumConfigFromFile(const std::string& filename)
     }
 
     file.close();
-    NS_LOG_INFO("Loaded " << m_quantums.size() << " quantum values.");
+    // NS_LOG_INFO("Loaded " << m_quantums.size() << " quantum values.");
+    // MS_LOG_LOGIC();
+    
 }
 
 uint32_t

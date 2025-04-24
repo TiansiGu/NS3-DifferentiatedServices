@@ -28,7 +28,7 @@ class DiffServ : public Queue<Packet>
 
     Ptr<Packet> Remove() override;
 
-    Ptr<const Packet> Peek() const;
+    Ptr<const Packet> Peek() const override;
 
     virtual Ptr<Packet> Schedule() = 0; // abstract method
 
