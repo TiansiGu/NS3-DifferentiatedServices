@@ -17,18 +17,26 @@
  class DrrQueue : public DiffServ
  {
    public:
-     DrrQueue(std::vector<uint32_t> quantumValues);
+     DrrQueue();
+
+     static TypeId GetTypeId();
  
      Ptr<Packet> Schedule() override;
  
      uint32_t Classify(Ptr<Packet> p) override;
  
-     Ptr<const Packet> Peek() const override;
+    //  Ptr<const Packet> Peek() const override;
+
+   protected:
+     void DoInitialize() override;
  
    private:
      std::vector<uint32_t> m_quantums;         
      std::vector<uint32_t> m_deficitCounters;  
-     uint32_t m_currentIndex;                  
+     uint32_t m_currentIndex;    
+     
+     std::string m_configFile; // <- come from SetAttribute
+     void LoadQuantumConfigFromFile(const std::string& filename);
  };
  
  } // namespace ns3

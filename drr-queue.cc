@@ -1,31 +1,84 @@
 #include "drr-queue.h"
 #include "ns3/log.h"
+#include <fstream>
+#include <sstream>
 
 namespace ns3
 {
 
 NS_LOG_COMPONENT_DEFINE("DrrQueue");
 
-DrrQueue::DrrQueue(std::vector<uint32_t> quantumValues)
-    : m_quantums(quantumValues),
-      m_currentIndex(0)
+DrrQueue::DrrQueue()
+    : m_currentIndex(0)
 {
-    m_deficitCounters.resize(quantumValues.size(), 0);
+}
+
+TypeId
+DrrQueue::GetTypeId()
+{
+    static TypeId tid = TypeId("ns3::DrrQueue")
+        .SetParent<DiffServ>()
+        .SetGroupName("Network")
+        .AddConstructor<DrrQueue>()
+        .AddAttribute("Config",
+                      "Path to DRR configuration file",
+                      StringValue(""),
+                      MakeStringAccessor(&DrrQueue::m_configFile),
+                      MakeStringChecker());
+    return tid;
+}
+
+void
+DrrQueue::DoInitialize()
+{
+    if (!m_configFile.empty())
+    {
+        LoadQuantumConfigFromFile(m_configFile);
+    }
+    m_deficitCounters.resize(m_quantums.size(), 0);
+    DiffServ::DoInitialize();
+}
+
+
+void
+DrrQueue::LoadQuantumConfigFromFile(const std::string& filename)
+{
+    std::ifstream file(filename);
+    if (!file.is_open())
+    {
+        NS_LOG_ERROR("Cannot open DRR config file: " << filename);
+        return;
+    }
+
+    uint32_t count;
+    file >> count;
+    m_quantums.clear();
+
+    for (uint32_t i = 0; i < count; ++i)
+    {
+        uint32_t q;
+        file >> q;
+        m_quantums.push_back(q);
+    }
+
+    file.close();
+    NS_LOG_INFO("Loaded " << m_quantums.size() << " quantum values.");
 }
 
 uint32_t
 DrrQueue::Classify(Ptr<Packet> p)
 {
-    for (uint32_t i = 0; i < q_class.size(); ++i)
+    const std::vector<TrafficClass*>& classes = GetTrafficClasses();
+    for (uint32_t i = 0; i < classes.size(); ++i)
     {
-        if (q_class[i]->Match(p))
+        if (classes[i]->Match(p))
             return i;
     }
 
     // fallback: return the default queue if available
-    for (uint32_t i = 0; i < q_class.size(); ++i)
+    for (uint32_t i = 0; i < classes.size(); ++i)
     {
-        if (q_class[i]->IsDefault())
+        if (classes[i]->IsDefault())
             return i;
     }
 
@@ -35,7 +88,8 @@ DrrQueue::Classify(Ptr<Packet> p)
 Ptr<Packet>
 DrrQueue::Schedule()
 {
-    uint32_t n = q_class.size();
+    const std::vector<TrafficClass*>& classes = GetTrafficClasses();
+    uint32_t n = classes.size();
 
     while (true)
     {
@@ -45,19 +99,19 @@ DrrQueue::Schedule()
         {
             uint32_t i = (m_currentIndex + offset) % n;
 
-            if (!q_class[i]->Empty())
+            if (classes[i]->GetPackets() > 0)
             {
                 // Only when visited, increase its deficit
                 m_deficitCounters[i] += m_quantums[i];
 
                 anyQueueHasPacket = true;
 
-                Ptr<Packet> p = q_class[i]->Peek();
+                Ptr<Packet> p = classes[i]->Peek();
                 if (p && p->GetSize() <= m_deficitCounters[i])
                 {
                     m_deficitCounters[i] -= p->GetSize();
                     m_currentIndex = (i + 1) % n; 
-                    return q_class[i]->Dequeue();
+                    return classes[i]->Dequeue();
                 }
             }
             
@@ -73,27 +127,5 @@ DrrQueue::Schedule()
     }
 }
 
-Ptr<const Packet>
-DrrQueue::Peek() const
-{
-    uint32_t n = q_class.size();
-    uint32_t idx = m_currentIndex;
-
-    for (uint32_t offset = 0; offset < n; ++offset)
-    {
-        uint32_t i = (idx + offset) % n;
-
-        if (!q_class[i]->Empty())
-        {
-            Ptr<Packet> p = q_class[i]->Peek();
-            if (p && p->GetSize() <= m_deficitCounters[i] + m_quantums[i])
-            {
-                return p;
-            }
-        }
-    }
-
-    return nullptr;
-}
 
 } // namespace ns3
