@@ -24,12 +24,16 @@ class FilterElement
     virtual bool Match(ns3::Ptr<ns3::Packet> p) const = 0;
 };
 
-class SourceIPAddress : public FilterElement
+class SourceIpAddress : public FilterElement
 {
   private:
     ns3::Ipv4Address value;
 
   public:
+    static TypeId GetTypeId();
+
+    SourceIpAddress();
+
     bool Match(ns3::Ptr<ns3::Packet> p) const override;
 };
 
@@ -40,6 +44,10 @@ class SourceMask : public FilterElement
     ns3::Ipv4Address addr;
 
   public:
+    static TypeId GetTypeId();
+
+    SourceMask();
+
     bool Match(ns3::Ptr<ns3::Packet> p) const override;
 };
 
@@ -49,15 +57,23 @@ class SourcePortNumber : public FilterElement
     uint32_t value;
 
   public:
+    static TypeId GetTypeId();
+
+    SourcePortNumber();
+
     bool Match(ns3::Ptr<ns3::Packet> p) const override;
 };
 
-class DestinationIPAddress : public FilterElement
+class DestinationIpAddress : public FilterElement
 {
   private:
     ns3::Ipv4Address value;
 
   public:
+    static TypeId GetTypeId();
+
+    DestinationIpAddress();
+
     bool Match(ns3::Ptr<ns3::Packet> p) const override;
 };
 
@@ -68,6 +84,10 @@ class DestinationMask : public FilterElement
     ns3::Ipv4Address addr;
 
   public:
+    static TypeId GetTypeId();
+
+    DestinationMask();
+
     bool Match(ns3::Ptr<ns3::Packet> p) const override;
 };
 
@@ -77,6 +97,10 @@ class DestinationPortNumber : public FilterElement
     uint32_t value;
 
   public:
+    static TypeId GetTypeId();
+
+    DestinationPortNumber();
+
     bool Match(ns3::Ptr<ns3::Packet> p) const override;
 };
 
@@ -86,6 +110,10 @@ class ProtocolNumber : public FilterElement
     uint32_t value;
 
   public:
+    static TypeId GetTypeId();
+
+    ProtocolNumber();
+
     bool Match(ns3::Ptr<ns3::Packet> p) const override;
 };
 

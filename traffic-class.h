@@ -9,7 +9,7 @@
 #ifndef TRAFFIC_CLASS_H
 #define TRAFFIC_CLASS_H
 
-#include "filter.h"
+#include "filter-class.h"
 
 namespace ns3
 {
@@ -26,6 +26,10 @@ class TrafficClass
     std::vector<Filter*> filters;         // a collection of Filters
 
   public:
+    static TypeId GetTypeId();
+
+    TrafficClass();
+
     bool IsDefault() const;
 
     bool Enqueue(Ptr<ns3::Packet> p);
@@ -38,9 +42,9 @@ class TrafficClass
 
     Ptr<ns3::Packet> Peek() const;
 
-    // uint32_t GetPackets() const;
-
     uint32_t GetPriorityLevel() const;
+
+    void AddFilter(Filter* filter);
 };
 
 } // namespace ns3

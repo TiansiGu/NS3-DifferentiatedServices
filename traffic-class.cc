@@ -2,6 +2,42 @@
 
 namespace ns3
 {
+TypeId
+TrafficClass::GetTypeId()
+{
+    static TypeId tid =
+        TypeId("ns3::TrafficClass")
+            .SetParent<Object>()
+            .AddConstructor<TrafficClass>()
+
+            // Register maxPackets
+            .AddAttribute("maxPackets",
+                          "Maximum number of packets in the class queue",
+                          UintegerValue(100),
+                          MakeIntegerAccessor(&TrafficClass::maxPackets),
+                          MakeIntegerChecker<uint32_t>())
+
+            // Register isDefault
+            .AddAttribute("isDefault",
+                          "Whether this is the default traffic class",
+                          BooleanValue(false),
+                          MakeBooleanAccessor(&TrafficClass::isDefault),
+                          MakeBooleanChecker())
+
+            // Register priorityLevel
+            .AddAttribute("priorityLevel",
+                          "Priority level (higher number indicates higher priority)",
+                          UintegerValue(0),
+                          MakeIntegerAccessor(&TrafficClass::priorityLevel),
+                          MakeIntegerChecker<uint32_t>());
+
+    return tid;
+}
+
+TrafficClass::TrafficClass()
+{
+}
+
 bool
 TrafficClass::IsDefault() const
 {
@@ -61,6 +97,12 @@ uint32_t
 TrafficClass::GetPriorityLevel() const
 {
     return priorityLevel;
+}
+
+void
+TrafficClass::AddFilter(Filter* filter)
+{
+    filters.push_back(filter);
 }
 
 } // namespace ns3

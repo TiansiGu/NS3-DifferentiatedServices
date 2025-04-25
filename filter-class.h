@@ -22,7 +22,13 @@ class Filter
     std::vector<FilterElement*> elements;
 
   public:
+    static TypeId GetTypeId();
+
+    Filter();
+
     bool Match(ns3::Ptr<ns3::Packet> p) const;
+
+    void AddFilterElement(FilterElement* filterElement);
 };
 
 } // namespace ns3

@@ -19,11 +19,21 @@ namespace ns3
 class StrictPriorityQueue : public DiffServ
 {
   public:
+    static TypeId GetTypeId();
+
+    StrictPriorityQueue();
+
     Ptr<Packet> Schedule() override;
 
     uint32_t Classify(Ptr<Packet> p) override;
 
     void AddTrafficClass(TrafficClass* trafficClass) override;
+
+  private:
+    std::string m_configFile;
+
+  protected:
+    void DoInitialize() override;
 };
 
 } // namespace ns3
