@@ -102,12 +102,26 @@ DrrQueue::Schedule()
 
         for (uint32_t offset = 0; offset < n; ++offset)
         {
-            uint32_t i = (m_currentIndex + offset) % n;
+            uint32_t i = m_currentIndex;
+            Ptr<TrafficClass> tc = classes[i];
+
+            // uint32_t i = (m_currentIndex + offset) % n;
+
+            // Skip empty queues
+            if (tc->GetPackets() == 0)
+            {
+                // m_deficitCounters[i] += m_quantums[i];
+                m_currentIndex = (m_currentIndex + 1) % n;
+                continue;
+            }
+
+            // Add quantum to current deficit only once per round
+            // m_deficitCounters[i] += m_quantums[i];
 
             if (classes[i]->GetPackets() > 0)
             {
                 // Only when visited, increase its deficit
-                m_deficitCounters[i] += m_quantums[i];
+                // m_deficitCounters[i] += m_quantums[i];
 
                 anyQueueHasPacket = true;
 
@@ -115,10 +129,30 @@ DrrQueue::Schedule()
                 if (p && p->GetSize() <= m_deficitCounters[i])
                 {
                     m_deficitCounters[i] -= p->GetSize();
+                    // m_currentIndex = (i + 1) % n;
+                    Ptr<Packet> sendPacket = classes[i]->Dequeue();
+
+                    // only move m_currentIndex if 1. the queue is empty 2. next Packet is larger than deficit
+                    if (tc->GetPackets() != 0 && tc->Peek()->GetSize() > m_deficitCounters[i])
+                    {
+                        m_deficitCounters[i] += m_quantums[i];
+                        m_currentIndex = (i + 1) % n;
+                    }
+                    // return classes[i]->Dequeue();
+                    return sendPacket;
+                } else 
+                {
+                    m_deficitCounters[i] += m_quantums[i];
                     m_currentIndex = (i + 1) % n;
-                    return classes[i]->Dequeue();
                 }
             }
+
+            // // only move m_currentIndex if 1. the queue is empty 2. next Packet is larger than deficit
+            // if (tc->GetPackets() == 0 || tc->Peek()->GetSize() > m_deficitCounters[i])
+            // {
+            //     m_deficitCounters[i] += m_quantums[i];
+            //     m_currentIndex = (i + 1) % n;
+            // }
         }
 
         if (!anyQueueHasPacket)
