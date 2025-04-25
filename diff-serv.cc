@@ -17,10 +17,23 @@ DiffServ::Dequeue()
     return Schedule();
 }
 
-Ptr<const Packet>
-DiffServ::Peek() const
+// Ptr<const Packet>
+// DiffServ::Peek() const
+// {
+//     return nullptr;
+// }
+
+// peek the first packet from the first non-empty TrafficClass
+Ptr<const Packet> DiffServ::Peek() const
 {
-    return nullptr;
+  for (const auto& tc : q_class)
+  {
+    if (tc->GetPackets() > 0)
+    {
+      return tc->Peek();  
+    }
+  }
+  return nullptr;  // all queue empty
 }
 
 Ptr<Packet>
