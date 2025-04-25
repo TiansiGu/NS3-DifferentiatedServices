@@ -12,11 +12,12 @@
 #include "filter-element.h"
 
 #include "ns3/internet-module.h"
+#include "ns3/object.h" 
 
 namespace ns3
 {
 
-class Filter
+class Filter : public Object
 {
   private:
     std::vector<FilterElement*> elements;

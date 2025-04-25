@@ -5,7 +5,17 @@
 #include <fstream>
 #include <sstream>
 
-// NS_LOG_COMPONENT_DEFINE("DrrQueue");
+#define NS_LOG_COMPONENT_INFO(comp, msg) \
+  std::cout << "[" << comp << " INFO] " << msg << std::endl;
+
+#define NS_LOG_COMPONENT_ERROR(comp, msg) \
+  std::cerr << "[" << comp << " ERROR] " << msg << std::endl;
+
+#define NS_LOG_COMPONENT_DEBUG(comp, msg) \
+  std::cout << "[" << comp << " DEBUG] " << msg << std::endl;
+
+
+NS_LOG_COMPONENT_DEFINE("DrrQueue");
 
 namespace ns3
 {
@@ -48,6 +58,13 @@ DrrQueue::LoadQuantumConfigFromFile(const std::string& filename)
     if (!file.is_open())
     {
         // NS_LOG_ERROR("Cannot open DRR config file: " << filename);
+        NS_LOG_COMPONENT_DEFINE("DrrQueue");
+        // NS_LOG_COMPONENT_ERROR("DrrQueue", "Cannot open DRR config file: " << filename);
+
+        std::ostringstream oss;
+        oss << "Cannot open DRR config file: " << filename;
+        NS_LOG_COMPONENT_ERROR("DrrQueue", oss.str());
+
         // NS_LOG_LOGIC("Cannot open DRR config file: " << filename);
 
         return;
@@ -103,7 +120,7 @@ DrrQueue::Schedule()
         for (uint32_t offset = 0; offset < n; ++offset)
         {
             uint32_t i = m_currentIndex;
-            Ptr<TrafficClass> tc = classes[i];
+            TrafficClass* tc = classes[i];
 
             // uint32_t i = (m_currentIndex + offset) % n;
 

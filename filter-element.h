@@ -10,11 +10,12 @@
 #define FILTER_ELEMENT_H
 
 #include "ns3/internet-module.h"
+#include "ns3/object.h"
 
 namespace ns3
 {
 
-class FilterElement
+class FilterElement : public Object
 {
   public:
     /* Virtual Destructor - open to extension */

@@ -10,11 +10,12 @@
 #define TRAFFIC_CLASS_H
 
 #include "filter-class.h"
+#include "ns3/object.h"
 
 namespace ns3
 {
 
-class TrafficClass
+class TrafficClass : public Object
 {
   private:
     uint32_t packets;
