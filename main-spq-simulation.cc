@@ -68,7 +68,9 @@ SetupSpqTopology(std::string configFile)
 int
 main(int argc, char* argv[])
 {
-    std::string spqConfig = "spq-config.json";
+    // TypeId tid = TrafficClass::GetTypeId();
+    
+    std::string spqConfig = "/home/kexin/ns-3-dev/scratch/NS3-DifferentiatedServices/spq.json";
     double simDuration = 50.0;
 
     CommandLine cmd;
@@ -82,15 +84,16 @@ main(int argc, char* argv[])
 
     // Flow B (low priority) — start early
     {
-        Address sinkAddr = InetSocketAddress(if12.GetAddress(1), basePort + 1);
-        PacketSinkHelper sink("ns3::TcpSocketFactory", sinkAddr);
+        uint16_t portB = basePort + 1;
+        UdpServerHelper sink(portB);
         ApplicationContainer sinkApp = sink.Install(nodes.Get(2));
         sinkApp.Start(Seconds(0.0));
         sinkApp.Stop(Seconds(50.0));
 
-        BulkSendHelper source("ns3::TcpSocketFactory", sinkAddr);
-        source.SetAttribute("MaxBytes", UintegerValue(0));
-        source.SetAttribute("SendSize", UintegerValue(1024));
+        UdpClientHelper source(if12.GetAddress(1), portB);
+        source.SetAttribute("MaxPackets", UintegerValue(0));  // infinite packets
+        source.SetAttribute("Interval", TimeValue(Seconds(0.004))); // 0.004s interval for 2Mbps
+        source.SetAttribute("PacketSize", UintegerValue(1000));     // 1000 bytes per packet
         ApplicationContainer sourceApp = source.Install(nodes.Get(0));
         sourceApp.Start(Seconds(0.0));
         sourceApp.Stop(Seconds(50.0));
@@ -98,18 +101,19 @@ main(int argc, char* argv[])
 
     // Flow A (high priority) — starts later to test preemption
     {
-        Address sinkAddr = InetSocketAddress(if12.GetAddress(1), basePort + 0);
-        PacketSinkHelper sink("ns3::TcpSocketFactory", sinkAddr);
+        uint16_t portA = basePort + 0;
+        UdpServerHelper sink(portA);
         ApplicationContainer sinkApp = sink.Install(nodes.Get(2));
         sinkApp.Start(Seconds(0.0));
         sinkApp.Stop(Seconds(50.0));
 
-        BulkSendHelper source("ns3::TcpSocketFactory", sinkAddr);
-        source.SetAttribute("MaxBytes", UintegerValue(0));
-        source.SetAttribute("SendSize", UintegerValue(1024));
+        UdpClientHelper source(if12.GetAddress(1), portA);
+        source.SetAttribute("MaxPackets", UintegerValue(0));               // send indefinitely
+        source.SetAttribute("Interval", TimeValue(Seconds(0.004)));        // 0.004s interval (2Mbps if 1000 bytes)
+        source.SetAttribute("PacketSize", UintegerValue(1000));            // 1000 bytes per packet
         ApplicationContainer sourceApp = source.Install(nodes.Get(0));
-        sourceApp.Start(Seconds(15.0)); // delay start
-        sourceApp.Stop(Seconds(35.0));  // ends early
+        sourceApp.Start(Seconds(15.0));                                     // starts later
+        sourceApp.Stop(Seconds(35.0));                                     // ends early
     }
 
     Ipv4GlobalRoutingHelper::PopulateRoutingTables();

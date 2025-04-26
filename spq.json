@@ -17,7 +17,7 @@
                     },
                     {
                         "type": "DestinationPortNumber",
-                        "value": 7000
+                        "value": 7001
                     }
                 ]
             ]
@@ -38,7 +38,7 @@
                     },
                     {
                         "type": "DestinationPortNumber",
-                        "value": 7001
+                        "value": 7000
                     }
                 ]
             ]
