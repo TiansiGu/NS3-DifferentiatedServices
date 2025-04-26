@@ -125,7 +125,7 @@ main(int argc, char* argv[])
         source.SetAttribute("PacketSize", UintegerValue(1000)); // 1000 bytes per packet
         ApplicationContainer sourceApp = source.Install(nodes.Get(0));
         sourceApp.Start(Seconds(15.0)); // starts later
-        sourceApp.Stop(Seconds(35.0));  // ends early
+        sourceApp.Stop(Seconds(25.0));  // ends early
     }
 
     Ipv4GlobalRoutingHelper::PopulateRoutingTables();

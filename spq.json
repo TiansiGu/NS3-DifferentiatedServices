@@ -2,7 +2,7 @@
     "type": "SPQ",
     "queues": [
         {
-            "maxPackets": 10000,
+            "maxPackets": 300,
             "isDefault": false,
             "priorityLevel": 1,
             "filters": [
@@ -15,7 +15,7 @@
             ]
         },
         {
-            "maxPackets": 10000,
+            "maxPackets": 300,
             "isDefault": true,
             "priorityLevel": 2,
             "filters": [

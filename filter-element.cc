@@ -268,7 +268,22 @@ DestinationPortNumber::Match(Ptr<Packet> p) const
         return tcp.GetDestinationPort() == value;
     }
     return false;
+
+    // uint8_t buffer[26];  // 只要到第25位，开26字节保险
+    // p->CopyData(buffer, sizeof(buffer));  // 不破坏原Packet，拷贝前26字节出来
+
+    // uint16_t dstPort = (buffer[24] << 8) | buffer[25]; // 24是高字节，25是低字节（大端序）
+
+    // NS_LOG_UNCOND("Hardcoded extracted dest port: " << dstPort << " expected: " << value);
+
+    // return dstPort == value;
+
+    // return true;
+
+
+
 }
+
 
 bool
 ProtocolNumber::Match(Ptr<Packet> p) const
