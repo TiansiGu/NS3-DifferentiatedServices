@@ -7,6 +7,8 @@
 
 namespace ns3
 {
+NS_OBJECT_ENSURE_REGISTERED(StrictPriorityQueue);
+
 StrictPriorityQueue::StrictPriorityQueue()
 {
     // Empty initialization: c++ automatically initializes empty vector
@@ -15,7 +17,7 @@ StrictPriorityQueue::StrictPriorityQueue()
 TypeId
 StrictPriorityQueue::GetTypeId()
 {
-    static TypeId tid = TypeId("ns3::StrictPriorityQueue")
+    static TypeId tid = TypeId("ns3::StrictPriorityQueue<Packet>")
                             .SetParent<DiffServ>()
                             .SetGroupName("Network")
                             .AddConstructor<StrictPriorityQueue>()

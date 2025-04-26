@@ -1,13 +1,14 @@
 
-#include "ns3/core-module.h"
-#include "ns3/network-module.h"
-#include "ns3/internet-module.h"
-#include "ns3/point-to-point-module.h"
-#include "ns3/applications-module.h"
-#include "ns3/traffic-control-module.h"
-#include "ns3/ipv4-global-routing-helper.h"
-#include "ns3/queue.h"
 #include "spq.h"
+
+#include "ns3/applications-module.h"
+#include "ns3/core-module.h"
+#include "ns3/internet-module.h"
+#include "ns3/ipv4-global-routing-helper.h"
+#include "ns3/network-module.h"
+#include "ns3/point-to-point-module.h"
+#include "ns3/queue.h"
+#include "ns3/traffic-control-module.h"
 // #include "creators/qos-initializer.h"
 #include "qos-initializer.h"
 
@@ -22,12 +23,13 @@ Ipv4InterfaceContainer if01, if12;
 
 /**
  * @brief Setup 3-node topology and attach SPQ queue at the router
- * 
+ *
  * Topology:
  *  node0 --- node1 --- node2
  *  sender    router    receiver
  */
-void SetupSpqTopology(std::string configFile)
+void
+SetupSpqTopology(std::string configFile)
 {
     nodes.Create(3);
 
@@ -55,20 +57,16 @@ void SetupSpqTopology(std::string configFile)
     // Ptr<PointToPointNetDevice> routerDev = dev12.Get(0)->GetObject<PointToPointNetDevice>();
     // routerDev->SetQueue(spqQueue);
 
-    //  New: Create SPQ object and initialize it
-    Ptr<StrictPriorityQueue> spqQueue = CreateObject<StrictPriorityQueue>();
-    QoSInitializer::InitializeSpqFromJson(spqQueue, configFile);
-
-    //  Attach initialized queue to the router's outgoing NetDevice
-    Ptr<PointToPointNetDevice> routerDev = dev12.Get(0)->GetObject<PointToPointNetDevice>();
-    routerDev->SetQueue(spqQueue);
+    //  New: Set router's outgoing NetDevice to use SPQ
+    p2p12.SetQueue("ns3::StrictPriorityQueue<Packet>", "Config", StringValue(configFile));
 
     // Enable packet capture
     p2p01.EnablePcap("spq-node0-node1", dev01, true);
     p2p12.EnablePcap("spq-node1-node2", dev12, true);
 }
 
-int main(int argc, char *argv[])
+int
+main(int argc, char* argv[])
 {
     std::string spqConfig = "spq-config.json";
     double simDuration = 50.0;
@@ -103,15 +101,15 @@ int main(int argc, char *argv[])
         Address sinkAddr = InetSocketAddress(if12.GetAddress(1), basePort + 0);
         PacketSinkHelper sink("ns3::TcpSocketFactory", sinkAddr);
         ApplicationContainer sinkApp = sink.Install(nodes.Get(2));
-        sinkApp.Start(Seconds(0.0));       
+        sinkApp.Start(Seconds(0.0));
         sinkApp.Stop(Seconds(50.0));
 
         BulkSendHelper source("ns3::TcpSocketFactory", sinkAddr);
         source.SetAttribute("MaxBytes", UintegerValue(0));
         source.SetAttribute("SendSize", UintegerValue(1024));
         ApplicationContainer sourceApp = source.Install(nodes.Get(0));
-        sourceApp.Start(Seconds(15.0));    // delay start
-        sourceApp.Stop(Seconds(35.0));     // ends early
+        sourceApp.Start(Seconds(15.0)); // delay start
+        sourceApp.Stop(Seconds(35.0));  // ends early
     }
 
     Ipv4GlobalRoutingHelper::PopulateRoutingTables();
