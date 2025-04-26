@@ -27,7 +27,7 @@ class StrictPriorityQueue : public DiffServ
 
     uint32_t Classify(Ptr<Packet> p) override;
 
-    void AddTrafficClass(TrafficClass* trafficClass) override;
+    void AddTrafficClass(Ptr<TrafficClass> trafficClass) override;
 
   private:
     std::string m_configFile;

@@ -31,6 +31,7 @@ Ipv4InterfaceContainer if01, if12;
 void
 SetupSpqTopology(std::string configFile)
 {
+    NS_LOG_UNCOND("Start to set topology...");
     nodes.Create(3);
 
     PointToPointHelper p2p01, p2p12;
@@ -39,8 +40,17 @@ SetupSpqTopology(std::string configFile)
     p2p12.SetDeviceAttribute("DataRate", StringValue("1Mbps"));
     p2p12.SetChannelAttribute("Delay", StringValue("2ms"));
 
+    //  New: Set router's outgoing NetDevice to use SPQ
+    p2p12.SetQueue("ns3::StrictPriorityQueue<Packet>", "Config", StringValue(configFile));
+
     dev01 = p2p01.Install(nodes.Get(0), nodes.Get(1));
     dev12 = p2p12.Install(nodes.Get(1), nodes.Get(2));
+
+    Ptr<PointToPointNetDevice> routerDev = dev12.Get(0)->GetObject<PointToPointNetDevice>();
+
+    Ptr<Queue<Packet>> queue = routerDev->GetQueue();
+    Ptr<StrictPriorityQueue> spq = DynamicCast<StrictPriorityQueue>(queue);
+    spq->Initialize();
 
     InternetStackHelper stack;
     stack.InstallAll();
@@ -57,8 +67,7 @@ SetupSpqTopology(std::string configFile)
     // Ptr<PointToPointNetDevice> routerDev = dev12.Get(0)->GetObject<PointToPointNetDevice>();
     // routerDev->SetQueue(spqQueue);
 
-    //  New: Set router's outgoing NetDevice to use SPQ
-    p2p12.SetQueue("ns3::StrictPriorityQueue<Packet>", "Config", StringValue(configFile));
+    // p2p12.SetQueue("ns3::StrictPriorityQueue<Packet>", "Config", StringValue(configFile));
 
     // Enable packet capture
     p2p01.EnablePcap("spq-node0-node1", dev01, true);
@@ -69,7 +78,9 @@ int
 main(int argc, char* argv[])
 {
     // TypeId tid = TrafficClass::GetTypeId();
-    
+
+    NS_LOG_UNCOND("Work start...");
+
     std::string spqConfig = "/home/kexin/ns-3-dev/scratch/NS3-DifferentiatedServices/spq.json";
     double simDuration = 50.0;
 
@@ -91,7 +102,7 @@ main(int argc, char* argv[])
         sinkApp.Stop(Seconds(50.0));
 
         UdpClientHelper source(if12.GetAddress(1), portB);
-        source.SetAttribute("MaxPackets", UintegerValue(0));  // infinite packets
+        source.SetAttribute("MaxPackets", UintegerValue(0));        // infinite packets
         source.SetAttribute("Interval", TimeValue(Seconds(0.004))); // 0.004s interval for 2Mbps
         source.SetAttribute("PacketSize", UintegerValue(1000));     // 1000 bytes per packet
         ApplicationContainer sourceApp = source.Install(nodes.Get(0));
@@ -108,12 +119,13 @@ main(int argc, char* argv[])
         sinkApp.Stop(Seconds(50.0));
 
         UdpClientHelper source(if12.GetAddress(1), portA);
-        source.SetAttribute("MaxPackets", UintegerValue(0));               // send indefinitely
-        source.SetAttribute("Interval", TimeValue(Seconds(0.004)));        // 0.004s interval (2Mbps if 1000 bytes)
-        source.SetAttribute("PacketSize", UintegerValue(1000));            // 1000 bytes per packet
+        source.SetAttribute("MaxPackets", UintegerValue(0)); // send indefinitely
+        source.SetAttribute("Interval",
+                            TimeValue(Seconds(0.004))); // 0.004s interval (2Mbps if 1000 bytes)
+        source.SetAttribute("PacketSize", UintegerValue(1000)); // 1000 bytes per packet
         ApplicationContainer sourceApp = source.Install(nodes.Get(0));
-        sourceApp.Start(Seconds(15.0));                                     // starts later
-        sourceApp.Stop(Seconds(35.0));                                     // ends early
+        sourceApp.Start(Seconds(15.0)); // starts later
+        sourceApp.Stop(Seconds(35.0));  // ends early
     }
 
     Ipv4GlobalRoutingHelper::PopulateRoutingTables();

@@ -12,6 +12,7 @@ NS_OBJECT_ENSURE_REGISTERED(StrictPriorityQueue);
 StrictPriorityQueue::StrictPriorityQueue()
 {
     // Empty initialization: c++ automatically initializes empty vector
+    NS_LOG_UNCOND("Create empty SPQ");
 }
 
 TypeId
@@ -36,7 +37,7 @@ StrictPriorityQueue::Classify(Ptr<Packet> p)
     const auto& q_class = GetTrafficClasses();
     for (int i = 0; i < q_class.size(); i++)
     {
-        TrafficClass* queue_class = q_class[i];
+        Ptr<TrafficClass> queue_class = q_class[i];
         if (queue_class->Match(p))
         {
             return i;
@@ -46,7 +47,7 @@ StrictPriorityQueue::Classify(Ptr<Packet> p)
     // If a packet doesn't match any of the queue, place it in the default queue
     for (int i = 0; i < q_class.size(); i++)
     {
-        TrafficClass* queue_class = q_class[i];
+        Ptr<TrafficClass> queue_class = q_class[i];
         if (queue_class->IsDefault())
         {
             return i;
@@ -58,7 +59,7 @@ Ptr<Packet>
 StrictPriorityQueue::Schedule()
 {
     const auto& q_class = GetTrafficClasses();
-    for (TrafficClass* queue_class : q_class)
+    for (Ptr<TrafficClass> queue_class : q_class)
     {
         if (queue_class->GetPackets() > 0)
         {
@@ -70,19 +71,22 @@ StrictPriorityQueue::Schedule()
 }
 
 void
-StrictPriorityQueue::AddTrafficClass(TrafficClass* trafficClass)
+StrictPriorityQueue::AddTrafficClass(Ptr<TrafficClass> trafficClass)
 {
     DiffServ::AddTrafficClass(trafficClass);
 
     auto& q_class = GetTrafficClasses();
-    std::sort(q_class.begin(), q_class.end(), [](const TrafficClass* a, const TrafficClass* b) {
-        return a->GetPriorityLevel() > b->GetPriorityLevel(); // descending order
-    });
+    std::sort(q_class.begin(),
+              q_class.end(),
+              [](const Ptr<TrafficClass> a, const Ptr<TrafficClass> b) {
+                  return a->GetPriorityLevel() > b->GetPriorityLevel(); // descending order
+              });
 }
 
 void
 StrictPriorityQueue::DoInitialize()
 {
+    NS_LOG_UNCOND("SPQ DoInitialize start");
     DiffServ::DoInitialize();
     QoSInitializer::InitializeSpqFromJson(this, m_configFile);
 }

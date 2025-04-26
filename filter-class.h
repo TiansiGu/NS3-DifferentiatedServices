@@ -12,7 +12,7 @@
 #include "filter-element.h"
 
 #include "ns3/internet-module.h"
-#include "ns3/object.h" 
+#include "ns3/object.h"
 
 namespace ns3
 {
@@ -20,7 +20,7 @@ namespace ns3
 class Filter : public Object
 {
   private:
-    std::vector<FilterElement*> elements;
+    std::vector<Ptr<FilterElement>> elements;
 
   public:
     static TypeId GetTypeId();
@@ -29,7 +29,7 @@ class Filter : public Object
 
     bool Match(ns3::Ptr<ns3::Packet> p) const;
 
-    void AddFilterElement(FilterElement* filterElement);
+    void AddFilterElement(Ptr<FilterElement> filterElement);
 };
 
 } // namespace ns3

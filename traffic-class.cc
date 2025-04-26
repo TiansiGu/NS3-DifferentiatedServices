@@ -2,6 +2,8 @@
 
 namespace ns3
 {
+NS_OBJECT_ENSURE_REGISTERED(TrafficClass);
+
 TypeId
 TrafficClass::GetTypeId()
 {
@@ -14,8 +16,8 @@ TrafficClass::GetTypeId()
             .AddAttribute("maxPackets",
                           "Maximum number of packets in the class queue",
                           UintegerValue(100),
-                          MakeIntegerAccessor(&TrafficClass::maxPackets),
-                          MakeIntegerChecker<uint32_t>())
+                          MakeUintegerAccessor(&TrafficClass::maxPackets),
+                          MakeUintegerChecker<uint32_t>())
 
             // Register isDefault
             .AddAttribute("isDefault",
@@ -28,8 +30,8 @@ TrafficClass::GetTypeId()
             .AddAttribute("priorityLevel",
                           "Priority level (higher number indicates higher priority)",
                           UintegerValue(0),
-                          MakeIntegerAccessor(&TrafficClass::priorityLevel),
-                          MakeIntegerChecker<uint32_t>());
+                          MakeUintegerAccessor(&TrafficClass::priorityLevel),
+                          MakeUintegerChecker<uint32_t>());
 
     return tid;
 }
@@ -70,7 +72,8 @@ TrafficClass::Dequeue()
 bool
 TrafficClass::Match(Ptr<Packet> p) const
 {
-    for (Filter* filter : filters)
+    // NS_LOG_UNCOND("filters matching");
+    for (Ptr<Filter> filter : filters)
     {
         if (filter->Match(p))
             return true;
@@ -100,7 +103,7 @@ TrafficClass::GetPriorityLevel() const
 }
 
 void
-TrafficClass::AddFilter(Filter* filter)
+TrafficClass::AddFilter(Ptr<Filter> filter)
 {
     filters.push_back(filter);
 }

@@ -1,9 +1,18 @@
 #include "filter-element.h"
 
 #include "ns3/log.h"
+#include "ns3/ppp-header.h"
 
 namespace ns3
 {
+// NS_OBJECT_ENSURE_REGISTERED(FilterElement);
+NS_OBJECT_ENSURE_REGISTERED(SourceIpAddress);
+NS_OBJECT_ENSURE_REGISTERED(DestinationIpAddress);
+NS_OBJECT_ENSURE_REGISTERED(SourceMask);
+NS_OBJECT_ENSURE_REGISTERED(DestinationMask);
+NS_OBJECT_ENSURE_REGISTERED(SourcePortNumber);
+NS_OBJECT_ENSURE_REGISTERED(DestinationPortNumber);
+NS_OBJECT_ENSURE_REGISTERED(ProtocolNumber);
 
 NS_LOG_COMPONENT_DEFINE("FilterElement");
 
@@ -94,8 +103,8 @@ SourcePortNumber::GetTypeId()
                             .AddAttribute("value",
                                           "The source port number to match.",
                                           UintegerValue(),
-                                          MakeIntegerAccessor(&SourcePortNumber::value),
-                                          MakeIntegerChecker<uint32_t>());
+                                          MakeUintegerAccessor(&SourcePortNumber::value),
+                                          MakeUintegerChecker<uint32_t>());
     return tid;
 }
 
@@ -103,14 +112,14 @@ TypeId
 DestinationPortNumber::GetTypeId()
 {
     static TypeId tid = TypeId("ns3::DestinationPortNumber")
-                            .SetParent<FilterElement>()
+                            .SetParent<Object>()
                             .AddConstructor<DestinationPortNumber>()
                             // Register port number
                             .AddAttribute("value",
                                           "The destination port number to match.",
                                           UintegerValue(),
-                                          MakeIntegerAccessor(&DestinationPortNumber::value),
-                                          MakeIntegerChecker<uint32_t>());
+                                          MakeUintegerAccessor(&DestinationPortNumber::value),
+                                          MakeUintegerChecker<uint32_t>());
     return tid;
 }
 
@@ -124,8 +133,8 @@ ProtocolNumber::GetTypeId()
                             .AddAttribute("value",
                                           "The destination port number to match.",
                                           UintegerValue(),
-                                          MakeIntegerAccessor(&ProtocolNumber::value),
-                                          MakeIntegerChecker<uint32_t>());
+                                          MakeUintegerAccessor(&ProtocolNumber::value),
+                                          MakeUintegerChecker<uint32_t>());
     return tid;
 }
 
@@ -234,12 +243,27 @@ DestinationPortNumber::Match(Ptr<Packet> p) const
 {
     UdpHeader udp;
     TcpHeader tcp;
+    NS_LOG_UNCOND("Packet size before peek: " << p->GetSize());
 
-    if (p->PeekHeader(udp))
+    Ptr<Packet> pCopy = p->Copy();
+    // EthernetHeader ethHeader;
+    // if (!pCopy->RemoveHeader(ethHeader))
+    // {
+    //     NS_LOG_WARN("Failed to remove Ethernet header");
+    // }
+
+    PppHeader pppHeader;
+    pCopy->RemoveHeader(pppHeader);
+    Ipv4Header ipHeader;
+    pCopy->RemoveHeader(ipHeader);
+
+    if (pCopy->PeekHeader(udp))
     {
+        NS_LOG_UNCOND("Check dest port value " << value);
+        NS_LOG_UNCOND("Check dest port GetDestinationPort " << udp.GetDestinationPort());
         return udp.GetDestinationPort() == value;
     }
-    else if (p->PeekHeader(tcp))
+    else if (pCopy->PeekHeader(tcp))
     {
         return tcp.GetDestinationPort() == value;
     }

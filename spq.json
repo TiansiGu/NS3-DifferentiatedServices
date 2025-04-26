@@ -8,14 +8,6 @@
             "filters": [
                 [
                     {
-                        "type": "SourceIpAddress",
-                        "value": "10.0.0.1"
-                    },
-                    {
-                        "type": "DestinationIpAddress",
-                        "value": "10.0.1.2"
-                    },
-                    {
                         "type": "DestinationPortNumber",
                         "value": 7001
                     }
@@ -28,14 +20,6 @@
             "priorityLevel": 2,
             "filters": [
                 [
-                    {
-                        "type": "SourceIpAddress",
-                        "value": "10.0.0.1"
-                    },
-                    {
-                        "type": "DestinationIpAddress",
-                        "value": "10.0.1.2"
-                    },
                     {
                         "type": "DestinationPortNumber",
                         "value": 7000

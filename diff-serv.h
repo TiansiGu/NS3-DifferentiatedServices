@@ -19,7 +19,7 @@ namespace ns3
 class DiffServ : public Queue<Packet>
 {
   private:
-    std::vector<TrafficClass*> q_class; // a collection of Traffic Class
+    std::vector<Ptr<TrafficClass>> q_class; // a collection of Traffic Class
 
   public:
     bool Enqueue(Ptr<Packet> p) override;
@@ -34,11 +34,11 @@ class DiffServ : public Queue<Packet>
 
     virtual uint32_t Classify(Ptr<Packet> p) = 0; // abstract method
 
-    virtual void AddTrafficClass(TrafficClass* trafficClass);
+    virtual void AddTrafficClass(Ptr<TrafficClass> trafficClass);
 
   protected:
-    std::vector<TrafficClass*>& GetTrafficClasses();             // for write
-    const std::vector<TrafficClass*>& GetTrafficClasses() const; // for read
+    std::vector<Ptr<TrafficClass>>& GetTrafficClasses();             // for write
+    const std::vector<Ptr<TrafficClass>>& GetTrafficClasses() const; // for read
 };
 
 } // namespace ns3

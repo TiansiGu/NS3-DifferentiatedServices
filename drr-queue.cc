@@ -1,19 +1,18 @@
 #include "drr-queue.h"
-#include "ns3/string.h"
+
 #include "ns3/log.h"
+#include "ns3/string.h"
 
 #include <fstream>
 #include <sstream>
 
-#define NS_LOG_COMPONENT_INFO(comp, msg) \
-  std::cout << "[" << comp << " INFO] " << msg << std::endl;
+#define NS_LOG_COMPONENT_INFO(comp, msg) std::cout << "[" << comp << " INFO] " << msg << std::endl;
 
-#define NS_LOG_COMPONENT_ERROR(comp, msg) \
-  std::cerr << "[" << comp << " ERROR] " << msg << std::endl;
+#define NS_LOG_COMPONENT_ERROR(comp, msg)                                                          \
+    std::cerr << "[" << comp << " ERROR] " << msg << std::endl;
 
-#define NS_LOG_COMPONENT_DEBUG(comp, msg) \
-  std::cout << "[" << comp << " DEBUG] " << msg << std::endl;
-
+#define NS_LOG_COMPONENT_DEBUG(comp, msg)                                                          \
+    std::cout << "[" << comp << " DEBUG] " << msg << std::endl;
 
 NS_LOG_COMPONENT_DEFINE("DrrQueue");
 
@@ -84,13 +83,12 @@ DrrQueue::LoadQuantumConfigFromFile(const std::string& filename)
     file.close();
     // NS_LOG_INFO("Loaded " << m_quantums.size() << " quantum values.");
     // MS_LOG_LOGIC();
-    
 }
 
 uint32_t
 DrrQueue::Classify(Ptr<Packet> p)
 {
-    const std::vector<TrafficClass*>& classes = GetTrafficClasses();
+    const std::vector<Ptr<TrafficClass>>& classes = GetTrafficClasses();
     for (uint32_t i = 0; i < classes.size(); ++i)
     {
         if (classes[i]->Match(p))
@@ -110,7 +108,7 @@ DrrQueue::Classify(Ptr<Packet> p)
 Ptr<Packet>
 DrrQueue::Schedule()
 {
-    const std::vector<TrafficClass*>& classes = GetTrafficClasses();
+    const std::vector<Ptr<TrafficClass>>& classes = GetTrafficClasses();
     uint32_t n = classes.size();
 
     while (true)
@@ -120,7 +118,7 @@ DrrQueue::Schedule()
         for (uint32_t offset = 0; offset < n; ++offset)
         {
             uint32_t i = m_currentIndex;
-            TrafficClass* tc = classes[i];
+            Ptr<TrafficClass> tc = classes[i];
 
             // uint32_t i = (m_currentIndex + offset) % n;
 
@@ -149,7 +147,8 @@ DrrQueue::Schedule()
                     // m_currentIndex = (i + 1) % n;
                     Ptr<Packet> sendPacket = classes[i]->Dequeue();
 
-                    // only move m_currentIndex if 1. the queue is empty 2. next Packet is larger than deficit
+                    // only move m_currentIndex if 1. the queue is empty 2. next Packet is larger
+                    // than deficit
                     if (tc->GetPackets() != 0 && tc->Peek()->GetSize() > m_deficitCounters[i])
                     {
                         m_deficitCounters[i] += m_quantums[i];
@@ -157,15 +156,16 @@ DrrQueue::Schedule()
                     }
                     // return classes[i]->Dequeue();
                     return sendPacket;
-                } else 
+                }
+                else
                 {
                     m_deficitCounters[i] += m_quantums[i];
                     m_currentIndex = (i + 1) % n;
                 }
             }
 
-            // // only move m_currentIndex if 1. the queue is empty 2. next Packet is larger than deficit
-            // if (tc->GetPackets() == 0 || tc->Peek()->GetSize() > m_deficitCounters[i])
+            // // only move m_currentIndex if 1. the queue is empty 2. next Packet is larger than
+            // deficit if (tc->GetPackets() == 0 || tc->Peek()->GetSize() > m_deficitCounters[i])
             // {
             //     m_deficitCounters[i] += m_quantums[i];
             //     m_currentIndex = (i + 1) % n;

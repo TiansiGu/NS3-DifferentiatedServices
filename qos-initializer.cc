@@ -4,6 +4,7 @@
 #include "./spq.h"
 #include "json.hpp"
 
+#include "ns3/log.h"
 #include "ns3/string.h"
 
 #include <fstream>
@@ -23,6 +24,8 @@ QoSInitializer::InitializeSpqFromJson(Ptr<StrictPriorityQueue> spq, const std::s
 {
     json config = LoadJson(filepath);
 
+    NS_LOG_UNCOND("Json file loaded");
+
     for (const auto& queueConf : config["queues"])
     {
         ObjectFactory tcFactory;
@@ -38,13 +41,14 @@ QoSInitializer::InitializeSpqFromJson(Ptr<StrictPriorityQueue> spq, const std::s
         // Ptr<TrafficClass> tc = tcFactory.Create();
         Ptr<TrafficClass> tc = DynamicCast<TrafficClass>(tcFactory.Create());
 
-        for (const auto& filterConf : config["filters"])
+        for (const auto& filterConf : queueConf["filters"])
         {
+            NS_LOG_UNCOND("Create filters");
             Ptr<Filter> filter = CreateFilter(filterConf);
-            tc->AddFilter(GetPointer(filter));
+            tc->AddFilter(filter);
         }
 
-        spq->AddTrafficClass(GetPointer(tc));
+        spq->AddTrafficClass(tc);
     }
 }
 
@@ -60,7 +64,7 @@ CreateFilter(const json& filterConf)
     for (const auto& filterElementConf : filterConf)
     {
         Ptr<FilterElement> filterElement = CreateFilterElement(filterElementConf);
-        filter->AddFilterElement(GetPointer(filterElement));
+        filter->AddFilterElement(filterElement);
     }
 
     return filter;
@@ -71,27 +75,27 @@ CreateFilterElement(const json& filterElementConf)
 {
     ObjectFactory feFactory;
 
-    const std::string& type = filterElementConf["type"].dump();
+    const std::string& type = filterElementConf["type"].get<std::string>();
     feFactory.SetTypeId("ns3::" + type);
 
     const auto& valueJson = filterElementConf["value"];
     if (type == "SourceIpAddress" || type == "DestinationIpAddress")
     {
-        Ipv4Address addr = Ipv4Address(valueJson.dump().c_str());
+        Ipv4Address addr = Ipv4Address(valueJson.get<std::string>().c_str());
         feFactory.Set("value", Ipv4AddressValue(addr));
     }
     else if (type == "SourceMask" || type == "DestinationMask")
     {
         const auto& addrJson = filterElementConf["addr"];
-        Ipv4Address addr = Ipv4Address(addrJson.dump().c_str());
+        Ipv4Address addr = Ipv4Address(addrJson.get<std::string>().c_str());
         feFactory.Set("addr", Ipv4AddressValue(addr));
-        Ipv4Mask mask = MakeIpv4MaskFromPrefixLength(valueJson.get<int>());
+        Ipv4Mask mask = MakeIpv4MaskFromPrefixLength(valueJson.get<uint8_t>());
         feFactory.Set("value", Ipv4MaskValue(mask));
     }
     else if (type == "SourcePortNumber" || type == "DestinationPortNumber" ||
              type == "ProtocolNumber")
     {
-        feFactory.Set("value", IntegerValue(valueJson.get<int>()));
+        feFactory.Set("value", UintegerValue(valueJson.get<uint32_t>()));
     }
 
     // Ptr<FilterElement> filterElement = feFactory.Create();
@@ -104,6 +108,7 @@ CreateFilterElement(const json& filterElementConf)
 static json
 LoadJson(const std::string& filepath)
 {
+    NS_LOG_UNCOND("Trying to read json file...");
     std::ifstream f(filepath);
     return json::parse(f);
 }
@@ -117,4 +122,3 @@ MakeIpv4MaskFromPrefixLength(uint8_t prefixLength)
 }
 
 } // namespace ns3
-

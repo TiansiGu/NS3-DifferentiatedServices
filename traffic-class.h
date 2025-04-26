@@ -10,6 +10,7 @@
 #define TRAFFIC_CLASS_H
 
 #include "filter-class.h"
+
 #include "ns3/object.h"
 
 namespace ns3
@@ -24,7 +25,7 @@ class TrafficClass : public Object
     uint32_t priorityLevel;
     bool isDefault;                       // whether this queue is served as the default queue
     std::queue<Ptr<ns3::Packet>> m_queue; // the queue that holds packet waiting to be scheduled
-    std::vector<Filter*> filters;         // a collection of Filters
+    std::vector<Ptr<Filter>> filters;     // a collection of Filters
 
   public:
     static TypeId GetTypeId();
@@ -45,7 +46,7 @@ class TrafficClass : public Object
 
     uint32_t GetPriorityLevel() const;
 
-    void AddFilter(Filter* filter);
+    void AddFilter(Ptr<Filter> filter);
 };
 
 } // namespace ns3

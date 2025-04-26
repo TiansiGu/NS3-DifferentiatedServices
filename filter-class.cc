@@ -2,6 +2,8 @@
 
 namespace ns3
 {
+NS_OBJECT_ENSURE_REGISTERED(Filter);
+
 TypeId
 Filter::GetTypeId()
 {
@@ -16,7 +18,8 @@ Filter::Filter()
 bool
 Filter::Match(Ptr<Packet> p) const
 {
-    for (FilterElement* element : elements)
+    // NS_LOG_UNCOND("filters matching");
+    for (Ptr<FilterElement> element : elements)
     {
         if (!element->Match(p))
             return false;
@@ -25,7 +28,7 @@ Filter::Match(Ptr<Packet> p) const
 }
 
 void
-Filter::AddFilterElement(FilterElement* filterElement)
+Filter::AddFilterElement(Ptr<FilterElement> filterElement)
 {
     elements.push_back(filterElement);
 }
