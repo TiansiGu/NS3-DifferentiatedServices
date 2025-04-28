@@ -15,8 +15,8 @@ namespace ns3
 {
 
 static nlohmann::json LoadJson(const std::string& filepath);
-static Ptr<Filter> CreateFilter(const nlohmann::json& filterConf);
-static Ptr<FilterElement> CreateFilterElement(const nlohmann::json& filterElementConf);
+static Ptr<Filter> CreateFilter(const json& filterConf);
+static Ptr<FilterElement> CreateFilterElement(const json& filterElementConf);
 static Ipv4Mask MakeIpv4MaskFromPrefixLength(uint8_t prefixLength);
 
 void
@@ -49,6 +49,40 @@ QoSInitializer::InitializeSpqFromJson(Ptr<StrictPriorityQueue> spq, const std::s
         }
 
         spq->AddTrafficClass(tc);
+    }
+}
+
+void
+QoSInitializer::InitializeDrrFromJson(Ptr<DrrQueue> drr, const std::string& filepath)
+{
+    json config = LoadJson(filepath);
+
+    NS_LOG_UNCOND("Json file loaded");
+
+    for (const auto& queueConf : config["queues"])
+    {
+        ObjectFactory tcFactory;
+        tcFactory.SetTypeId("ns3::TrafficClass");
+
+        const auto& maxPacketsJson = queueConf["maxPackets"];
+        tcFactory.Set("maxPackets", UintegerValue(maxPacketsJson.get<uint32_t>()));
+        const auto& isDefaultJson = queueConf["isDefault"];
+        tcFactory.Set("isDefault", BooleanValue(isDefaultJson.get<bool>()));
+
+        Ptr<TrafficClass> tc = DynamicCast<TrafficClass>(tcFactory.Create());
+
+        for (const auto& filterConf : queueConf["filters"])
+        {
+            NS_LOG_UNCOND("Create filters");
+            Ptr<Filter> filter = CreateFilter(filterConf);
+            tc->AddFilter(filter);
+        }
+
+        drr->AddTrafficClass(tc);
+
+        // Add quantum config in m_quantums
+        const auto& quantumJson = queueConf["quantum"];
+        drr->AddQuantum(quantumJson.get<u_int32_t>());
     }
 }
 

@@ -6,40 +6,41 @@
  * Author: Kexin Dai, Tiansi Gu
  */
 
- #ifndef DRR_QUEUE_H
- #define DRR_QUEUE_H
- 
- #include "diff-serv.h"
- 
- namespace ns3
- {
- 
- class DrrQueue : public DiffServ
- {
-   public:
-     DrrQueue();
+#ifndef DRR_QUEUE_H
+#define DRR_QUEUE_H
 
-     static TypeId GetTypeId();
- 
-     Ptr<Packet> Schedule() override;
- 
-     uint32_t Classify(Ptr<Packet> p) override;
- 
+#include "diff-serv.h"
+
+namespace ns3
+{
+
+class DrrQueue : public DiffServ
+{
+  public:
+    static TypeId GetTypeId();
+
+    DrrQueue();
+
+    Ptr<Packet> Schedule() override;
+
+    uint32_t Classify(Ptr<Packet> p) override;
+
+    void AddQuantum(uint32_t quantum);
+
     //  Ptr<const Packet> Peek() const override;
 
-   protected:
-     void DoInitialize() override;
- 
-   private:
-     std::vector<uint32_t> m_quantums;         
-     std::vector<uint32_t> m_deficitCounters;  
-     uint32_t m_currentIndex;    
-     
-     std::string m_configFile; // <- come from SetAttribute
-     void LoadQuantumConfigFromFile(const std::string& filename);
- };
- 
- } // namespace ns3
- 
- #endif // DRR_QUEUE_H
- 
+  protected:
+    void DoInitialize() override;
+
+  private:
+    std::vector<uint32_t> m_quantums;
+    std::vector<uint32_t> m_deficitCounters;
+    uint32_t m_currentIndex;
+
+    std::string m_configFile; // <- come from SetAttribute
+    // void LoadQuantumConfigFromFile(const std::string& filename);
+};
+
+} // namespace ns3
+
+#endif // DRR_QUEUE_H

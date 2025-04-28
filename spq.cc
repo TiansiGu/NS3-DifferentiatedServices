@@ -80,23 +80,23 @@ StrictPriorityQueue::Schedule()
     for (uint32_t i = 0; i < q_class.size(); ++i)
     {
         Ptr<TrafficClass> queue_class = q_class[i];
-        NS_LOG_UNCOND("Checking queue index " << i
-                        << " priority " << queue_class->GetPriorityLevel()
-                        << " packets " << queue_class->GetPackets());
+        NS_LOG_UNCOND("Checking queue index " << i << " priority "
+                                              << queue_class->GetPriorityLevel() << " packets "
+                                              << queue_class->GetPackets());
 
         if (queue_class->GetPackets() > 0)
         {
-            NS_LOG_UNCOND("Dequeue from queue index " << i
-                            << " priority " << queue_class->GetPriorityLevel()
-                            << " packets before dequeue: " << queue_class->GetPackets());
+            NS_LOG_UNCOND("Dequeue from queue index "
+                          << i << " priority " << queue_class->GetPriorityLevel()
+                          << " packets before dequeue: " << queue_class->GetPackets());
 
             Ptr<Packet> pkt = queue_class->Dequeue();
 
             if (pkt != nullptr)
             {
                 NS_LOG_UNCOND("Dequeued packet UID: " << pkt->GetUid()
-                                << " Size: " << pkt->GetSize()
-                                << " from queue index " << i);
+                                                      << " Size: " << pkt->GetSize()
+                                                      << " from queue index " << i);
             }
             else
             {

@@ -1,5 +1,7 @@
 #include "drr-queue.h"
 
+#include "qos-initializer.h"
+
 #include "ns3/log.h"
 #include "ns3/string.h"
 
@@ -27,7 +29,7 @@ DrrQueue::DrrQueue()
 TypeId
 DrrQueue::GetTypeId()
 {
-    static TypeId tid = TypeId("ns3::DrrQueue")
+    static TypeId tid = TypeId("ns3::DrrQueue<Packet>")
                             .SetParent<DiffServ>()
                             .SetGroupName("Network")
                             .AddConstructor<DrrQueue>()
@@ -42,47 +44,10 @@ DrrQueue::GetTypeId()
 void
 DrrQueue::DoInitialize()
 {
-    if (!m_configFile.empty())
-    {
-        LoadQuantumConfigFromFile(m_configFile);
-    }
+    NS_LOG_UNCOND("DRR DoInitialize start");
+    DiffServ::DoInitialize();
+    QoSInitializer::InitializeDrrFromJson(this, m_configFile);
     m_deficitCounters.resize(m_quantums.size(), 0);
-    // DiffServ::DoInitialize();
-}
-
-void
-DrrQueue::LoadQuantumConfigFromFile(const std::string& filename)
-{
-    std::ifstream file(filename);
-    if (!file.is_open())
-    {
-        // NS_LOG_ERROR("Cannot open DRR config file: " << filename);
-        NS_LOG_COMPONENT_DEFINE("DrrQueue");
-        // NS_LOG_COMPONENT_ERROR("DrrQueue", "Cannot open DRR config file: " << filename);
-
-        std::ostringstream oss;
-        oss << "Cannot open DRR config file: " << filename;
-        NS_LOG_COMPONENT_ERROR("DrrQueue", oss.str());
-
-        // NS_LOG_LOGIC("Cannot open DRR config file: " << filename);
-
-        return;
-    }
-
-    uint32_t count;
-    file >> count;
-    m_quantums.clear();
-
-    for (uint32_t i = 0; i < count; ++i)
-    {
-        uint32_t q;
-        file >> q;
-        m_quantums.push_back(q);
-    }
-
-    file.close();
-    // NS_LOG_INFO("Loaded " << m_quantums.size() << " quantum values.");
-    // MS_LOG_LOGIC();
 }
 
 uint32_t
@@ -179,6 +144,12 @@ DrrQueue::Schedule()
 
         // if not enough deficit, try next round
     }
+}
+
+void
+DrrQueue::AddQuantum(uint32_t quantum)
+{
+    m_quantums.push_back(quantum);
 }
 
 } // namespace ns3

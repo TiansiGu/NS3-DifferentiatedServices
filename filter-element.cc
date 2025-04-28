@@ -14,6 +14,7 @@ NS_OBJECT_ENSURE_REGISTERED(SourcePortNumber);
 NS_OBJECT_ENSURE_REGISTERED(DestinationPortNumber);
 NS_OBJECT_ENSURE_REGISTERED(ProtocolNumber);
 
+/* Generate log component */
 NS_LOG_COMPONENT_DEFINE("FilterElement");
 
 TypeId
@@ -112,7 +113,7 @@ TypeId
 DestinationPortNumber::GetTypeId()
 {
     static TypeId tid = TypeId("ns3::DestinationPortNumber")
-                            .SetParent<Object>()
+                            .SetParent<FilterElement>()
                             .AddConstructor<DestinationPortNumber>()
                             // Register port number
                             .AddAttribute("value",
@@ -279,11 +280,7 @@ DestinationPortNumber::Match(Ptr<Packet> p) const
     // return dstPort == value;
 
     // return true;
-
-
-
 }
-
 
 bool
 ProtocolNumber::Match(Ptr<Packet> p) const
