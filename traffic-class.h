@@ -46,6 +46,8 @@ class TrafficClass : public Object
 
     uint32_t GetPriorityLevel() const;
 
+    uint32_t GetWeight() const;
+
     void AddFilter(Ptr<Filter> filter);
 };
 

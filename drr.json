@@ -1,0 +1,44 @@
+{
+    "type": "SPQ",
+    "queues": [
+        {
+            "maxPackets": 300,
+            "isDefault": false,
+            "weight": 3000,
+            "filters": [
+                [
+                    {
+                        "type": "DestinationPortNumber",
+                        "value": 5000
+                    }
+                ]
+            ]
+        },
+        {
+            "maxPackets": 300,
+            "isDefault": false,
+            "weight": 2000,
+            "filters": [
+                [
+                    {
+                        "type": "DestinationPortNumber",
+                        "value": 5001
+                    }
+                ]
+            ]
+        },
+        {
+            "maxPackets": 300,
+            "isDefault": true,
+            "weight": 1000,
+            "filters": [
+                [
+                    {
+                        "type": "DestinationPortNumber",
+                        "value": 5002
+                    }
+                ]
+            ]
+        }
+    ]
+}

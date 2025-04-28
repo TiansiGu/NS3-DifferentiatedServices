@@ -68,6 +68,8 @@ QoSInitializer::InitializeDrrFromJson(Ptr<DrrQueue> drr, const std::string& file
         tcFactory.Set("maxPackets", UintegerValue(maxPacketsJson.get<uint32_t>()));
         const auto& isDefaultJson = queueConf["isDefault"];
         tcFactory.Set("isDefault", BooleanValue(isDefaultJson.get<bool>()));
+        const auto& weightJson = queueConf["weight"];
+        tcFactory.Set("weight", UintegerValue(weightJson.get<uint32_t>()));
 
         Ptr<TrafficClass> tc = DynamicCast<TrafficClass>(tcFactory.Create());
 
@@ -81,8 +83,8 @@ QoSInitializer::InitializeDrrFromJson(Ptr<DrrQueue> drr, const std::string& file
         drr->AddTrafficClass(tc);
 
         // Add quantum config in m_quantums
-        const auto& quantumJson = queueConf["quantum"];
-        drr->AddQuantum(quantumJson.get<u_int32_t>());
+        // const auto& quantumJson = queueConf["quantum"];
+        // drr->AddQuantum(quantumJson.get<u_int32_t>());
     }
 }
 

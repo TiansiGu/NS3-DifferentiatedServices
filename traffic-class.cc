@@ -31,6 +31,13 @@ TrafficClass::GetTypeId()
                           "Priority level (higher number indicates higher priority)",
                           UintegerValue(0),
                           MakeUintegerAccessor(&TrafficClass::priorityLevel),
+                          MakeUintegerChecker<uint32_t>())
+
+            // Register priorityLevel
+            .AddAttribute("weight",
+                          "quantum of the traffic clas",
+                          UintegerValue(1000),
+                          MakeUintegerAccessor(&TrafficClass::weight),
                           MakeUintegerChecker<uint32_t>());
 
     return tid;
@@ -112,6 +119,12 @@ uint32_t
 TrafficClass::GetPriorityLevel() const
 {
     return priorityLevel;
+}
+
+uint32_t
+TrafficClass::GetWeight() const
+{
+    return weight;
 }
 
 void

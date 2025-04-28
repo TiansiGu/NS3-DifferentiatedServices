@@ -21,6 +21,8 @@ NS_LOG_COMPONENT_DEFINE("DrrQueue");
 namespace ns3
 {
 
+NS_OBJECT_ENSURE_REGISTERED(DrrQueue);
+
 DrrQueue::DrrQueue()
     : m_currentIndex(0)
 {
@@ -47,7 +49,9 @@ DrrQueue::DoInitialize()
     NS_LOG_UNCOND("DRR DoInitialize start");
     DiffServ::DoInitialize();
     QoSInitializer::InitializeDrrFromJson(this, m_configFile);
-    m_deficitCounters.resize(m_quantums.size(), 0);
+    // m_deficitCounters.resize(m_quantums.size(), 0);
+    m_deficitCounters.resize(GetTrafficClasses().size(), 0);
+
 }
 
 uint32_t
@@ -116,7 +120,9 @@ DrrQueue::Schedule()
                     // than deficit
                     if (tc->GetPackets() != 0 && tc->Peek()->GetSize() > m_deficitCounters[i])
                     {
-                        m_deficitCounters[i] += m_quantums[i];
+                        // m_deficitCounters[i] += m_quantums[i];
+                        m_deficitCounters[i] += tc->GetWeight();
+
                         m_currentIndex = (i + 1) % n;
                     }
                     // return classes[i]->Dequeue();
@@ -124,7 +130,9 @@ DrrQueue::Schedule()
                 }
                 else
                 {
-                    m_deficitCounters[i] += m_quantums[i];
+                    // m_deficitCounters[i] += m_quantums[i];
+                    m_deficitCounters[i] += tc->GetWeight();
+
                     m_currentIndex = (i + 1) % n;
                 }
             }
