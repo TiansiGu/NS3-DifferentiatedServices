@@ -99,9 +99,6 @@ DrrQueue::Schedule()
                 continue;
             }
 
-            // Add quantum to current deficit only once per round
-            // m_deficitCounters[i] += m_quantums[i];
-
             if (classes[i]->GetPackets() > 0)
             {
                 // Only when visited, increase its deficit
@@ -137,12 +134,6 @@ DrrQueue::Schedule()
                 }
             }
 
-            // // only move m_currentIndex if 1. the queue is empty 2. next Packet is larger than
-            // deficit if (tc->GetPackets() == 0 || tc->Peek()->GetSize() > m_deficitCounters[i])
-            // {
-            //     m_deficitCounters[i] += m_quantums[i];
-            //     m_currentIndex = (i + 1) % n;
-            // }
         }
 
         if (!anyQueueHasPacket)
@@ -154,10 +145,5 @@ DrrQueue::Schedule()
     }
 }
 
-void
-DrrQueue::AddQuantum(uint32_t quantum)
-{
-    m_quantums.push_back(quantum);
-}
 
 } // namespace ns3
