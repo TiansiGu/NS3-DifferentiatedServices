@@ -179,9 +179,21 @@ ProtocolNumber::ProtocolNumber()
 bool
 SourceIpAddress::Match(Ptr<Packet> p) const
 {
-    Ipv4Header header;
-    if (p->PeekHeader(header))
+    NS_LOG_UNCOND("Trying to match source ip ");
+    // Remove PPP header
+    Ptr<Packet> pCopy = p->Copy();
+    PppHeader pppHeader;
+    if (pCopy->RemoveHeader(pppHeader) == 0)
     {
+        NS_LOG_ERROR("Failed to remove PPP header from packet");
+        return false;
+    }
+
+    Ipv4Header header;
+    if (pCopy->PeekHeader(header))
+    {
+        NS_LOG_UNCOND("IP address value: " << value);
+        NS_LOG_UNCOND("IP address: " << header.GetSource());
         return header.GetSource() == value;
     }
     return false;
@@ -190,8 +202,17 @@ SourceIpAddress::Match(Ptr<Packet> p) const
 bool
 SourceMask::Match(Ptr<Packet> p) const
 {
+    // Remove PPP header
+    Ptr<Packet> pCopy = p->Copy();
+    PppHeader pppHeader;
+    if (pCopy->RemoveHeader(pppHeader) == 0)
+    {
+        NS_LOG_ERROR("Failed to remove PPP header from packet");
+        return false;
+    }
+
     Ipv4Header header;
-    if (p->PeekHeader(header))
+    if (pCopy->PeekHeader(header))
     {
         Ipv4Address src = header.GetSource();
         return src.CombineMask(value) == addr.CombineMask(value);
@@ -202,14 +223,30 @@ SourceMask::Match(Ptr<Packet> p) const
 bool
 SourcePortNumber::Match(Ptr<Packet> p) const
 {
+    // Remove PPP header and IP header
+    Ptr<Packet> pCopy = p->Copy();
+
+    PppHeader pppHeader;
+    Ipv4Header ipHeader;
+    if (pCopy->RemoveHeader(pppHeader) == 0)
+    {
+        NS_LOG_ERROR("Failed to remove PPP header from packet");
+        return false;
+    }
+    if (pCopy->RemoveHeader(ipHeader) == 0)
+    {
+        NS_LOG_ERROR("Failed to remove IP header from packet");
+        return false;
+    }
+
     UdpHeader udp;
     TcpHeader tcp;
 
-    if (p->PeekHeader(udp))
+    if (pCopy->PeekHeader(udp))
     {
         return udp.GetSourcePort() == value;
     }
-    else if (p->PeekHeader(tcp))
+    else if (pCopy->PeekHeader(tcp))
     {
         return tcp.GetSourcePort() == value;
     }
@@ -219,8 +256,17 @@ SourcePortNumber::Match(Ptr<Packet> p) const
 bool
 DestinationIpAddress::Match(Ptr<Packet> p) const
 {
+    // Remove PPP header
+    Ptr<Packet> pCopy = p->Copy();
+    PppHeader pppHeader;
+    if (pCopy->RemoveHeader(pppHeader) == 0)
+    {
+        NS_LOG_ERROR("Failed to remove PPP header from packet");
+        return false;
+    }
+
     Ipv4Header header;
-    if (p->PeekHeader(header))
+    if (pCopy->PeekHeader(header))
     {
         return header.GetDestination() == value;
     }
@@ -230,8 +276,17 @@ DestinationIpAddress::Match(Ptr<Packet> p) const
 bool
 DestinationMask::Match(Ptr<Packet> p) const
 {
+    // Remove PPP header
+    Ptr<Packet> pCopy = p->Copy();
+    PppHeader pppHeader;
+    if (pCopy->RemoveHeader(pppHeader) == 0)
+    {
+        NS_LOG_ERROR("Failed to remove PPP header from packet");
+        return false;
+    }
+
     Ipv4Header header;
-    if (p->PeekHeader(header))
+    if (pCopy->PeekHeader(header))
     {
         Ipv4Address dst = header.GetDestination();
         return dst.CombineMask(value) == addr.CombineMask(value);
@@ -242,26 +297,31 @@ DestinationMask::Match(Ptr<Packet> p) const
 bool
 DestinationPortNumber::Match(Ptr<Packet> p) const
 {
-    UdpHeader udp;
-    TcpHeader tcp;
-    NS_LOG_UNCOND("Packet size before peek: " << p->GetSize());
-
+    // Remove PPP header and IP header
     Ptr<Packet> pCopy = p->Copy();
-    // EthernetHeader ethHeader;
-    // if (!pCopy->RemoveHeader(ethHeader))
-    // {
-    //     NS_LOG_WARN("Failed to remove Ethernet header");
-    // }
 
     PppHeader pppHeader;
-    pCopy->RemoveHeader(pppHeader);
     Ipv4Header ipHeader;
-    pCopy->RemoveHeader(ipHeader);
+    if (pCopy->RemoveHeader(pppHeader) == 0)
+    {
+        NS_LOG_ERROR("Failed to remove PPP header from packet");
+        NS_LOG_UNCOND("Remove PPP header error");
+        return false;
+    }
+    if (pCopy->RemoveHeader(ipHeader) == 0)
+    {
+        NS_LOG_ERROR("Failed to remove IP header from packet");
+        NS_LOG_UNCOND("Remove Ip header error");
+        return false;
+    }
+
+    UdpHeader udp;
+    TcpHeader tcp;
 
     if (pCopy->PeekHeader(udp))
     {
-        NS_LOG_UNCOND("Check dest port value " << value);
-        NS_LOG_UNCOND("Check dest port GetDestinationPort " << udp.GetDestinationPort());
+        // NS_LOG_UNCOND("Check dest port value " << value);
+        // NS_LOG_UNCOND("Check dest port GetDestinationPort " << udp.GetDestinationPort());
         return udp.GetDestinationPort() == value;
     }
     else if (pCopy->PeekHeader(tcp))
@@ -285,8 +345,17 @@ DestinationPortNumber::Match(Ptr<Packet> p) const
 bool
 ProtocolNumber::Match(Ptr<Packet> p) const
 {
+    // Remove PPP header
+    Ptr<Packet> pCopy = p->Copy();
+    PppHeader pppHeader;
+    if (pCopy->RemoveHeader(pppHeader) == 0)
+    {
+        NS_LOG_ERROR("Failed to remove PPP header from packet");
+        return false;
+    }
+
     Ipv4Header header;
-    if (p->PeekHeader(header))
+    if (pCopy->PeekHeader(header))
     {
         return header.GetProtocol() == value;
     }
