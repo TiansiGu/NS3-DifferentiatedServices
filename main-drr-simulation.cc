@@ -90,12 +90,12 @@ main(int argc, char* argv[])
 
     SetupDrrTopology(drrConfig);
 
-    // Install 3 BulkSend flows: from node0 to node2 on different ports
+    // Install 3 Bulk flows: from node0 to node2 on different ports
     uint16_t basePort = 5000;
+    std::vector<std::pair<double, double>> timeIntervals = {{0.0, 50.0}, {0.0, 15.0}, {0.0, 30.0}};
     for (int i = 0; i < 3; ++i)
     {
-        /////////////////////////////////////////
-        uint16_t portI = basePort + i;
+        uint16_t portI = basePort + i; // change port to match filters
         UdpServerHelper sink(portI);
         ApplicationContainer sinkApp = sink.Install(nodes.Get(2));
         sinkApp.Start(Seconds(0.0));
@@ -106,8 +106,11 @@ main(int argc, char* argv[])
         source.SetAttribute("Interval", TimeValue(Seconds(0.004))); // 0.004s interval for 2Mbps
         source.SetAttribute("PacketSize", UintegerValue(1000));     // 1000 bytes per packet
         ApplicationContainer sourceApp = source.Install(nodes.Get(0));
-        sourceApp.Start(Seconds(0.0));
-        sourceApp.Stop(Seconds(50.0));
+
+        double startTime = timeIntervals[i].first;
+        double stopTime = timeIntervals[i].second;
+        sourceApp.Start(Seconds(startTime));
+        sourceApp.Stop(Seconds(stopTime));
     }
 
     Ipv4GlobalRoutingHelper::PopulateRoutingTables();
