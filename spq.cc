@@ -31,6 +31,14 @@ StrictPriorityQueue::GetTypeId()
     return tid;
 }
 
+/**
+ * @brief Classify an incoming packet into a traffic class index based on filter rules.
+ *
+ * First matches filters; if no match is found, returns the index of the default queue.
+ *
+ * @param p The incoming packet
+ * @return The index of the matching or default TrafficClass
+ */
 u_int32_t
 StrictPriorityQueue::Classify(Ptr<Packet> p)
 {
@@ -55,6 +63,13 @@ StrictPriorityQueue::Classify(Ptr<Packet> p)
     }
 }
 
+/**
+ * @brief Select the next packet for transmission based on strict priority.
+ *
+ * Iterates over the traffic classes in descending priority and dequeues the first available packet.
+ *
+ * @return Pointer to the selected packet, or nullptr if all queues are empty
+ */
 Ptr<Packet>
 StrictPriorityQueue::Schedule()
 {
@@ -75,6 +90,13 @@ StrictPriorityQueue::Schedule()
     return nullptr;
 }
 
+/**
+ * @brief Adds a new traffic class and sorts all classes by descending priority.
+ *
+ * Ensures the highest-priority class is always first for scheduling purposes.
+ *
+ * @param trafficClass Pointer to the new TrafficClass
+ */
 void
 StrictPriorityQueue::AddTrafficClass(Ptr<TrafficClass> trafficClass)
 {
@@ -88,6 +110,11 @@ StrictPriorityQueue::AddTrafficClass(Ptr<TrafficClass> trafficClass)
               });
 }
 
+/**
+ * @brief Initialization hook called at simulation startup.
+ *
+ * Parses the JSON configuration file and creates the configured traffic classes.
+ */
 void
 StrictPriorityQueue::DoInitialize()
 {

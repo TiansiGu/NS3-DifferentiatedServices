@@ -23,11 +23,13 @@ namespace ns3
 
 NS_OBJECT_ENSURE_REGISTERED(DrrQueue);
 
+// Constructor initializes current index to 0
 DrrQueue::DrrQueue()
     : m_currentIndex(0)
 {
 }
 
+// TypeId registration with ns-3
 TypeId
 DrrQueue::GetTypeId()
 {
@@ -43,16 +45,24 @@ DrrQueue::GetTypeId()
     return tid;
 }
 
+/**
+ * @brief Initializes the DRR queue using a JSON config file.
+ *        Parses the configuration, sets up TrafficClasses,
+ *        and initializes deficit counters.
+ */
 void
 DrrQueue::DoInitialize()
 {
     NS_LOG_UNCOND("DRR DoInitialize start");
     DiffServ::DoInitialize();
     QoSInitializer::InitializeDrrFromJson(this, m_configFile);
-    // m_deficitCounters.resize(m_quantums.size(), 0);
     m_deficitCounters.resize(GetTrafficClasses().size(), 0);
 }
 
+/**
+ * @brief Classify incoming packets based on filters in TrafficClass.
+ *        Returns the index of the first matching class, or the default class.
+ */
 uint32_t
 DrrQueue::Classify(Ptr<Packet> p)
 {
@@ -73,6 +83,12 @@ DrrQueue::Classify(Ptr<Packet> p)
     return 0;
 }
 
+/**
+ * @brief DRR scheduling logic.
+ *        Selects the next packet to transmit based on per-class deficits.
+ *
+ * @return The selected packet, or nullptr if all queues are empty.
+ */
 Ptr<Packet>
 DrrQueue::Schedule()
 {
@@ -88,45 +104,37 @@ DrrQueue::Schedule()
             uint32_t i = m_currentIndex;
             Ptr<TrafficClass> tc = classes[i];
 
-            // uint32_t i = (m_currentIndex + offset) % n;
-
             // Skip empty queues
             if (tc->GetPackets() == 0)
             {
-                // m_deficitCounters[i] += m_quantums[i];
                 m_currentIndex = (m_currentIndex + 1) % n;
                 continue;
             }
 
             if (classes[i]->GetPackets() > 0)
             {
-                // Only when visited, increase its deficit
-                // m_deficitCounters[i] += m_quantums[i];
-
                 anyQueueHasPacket = true;
 
                 Ptr<Packet> p = classes[i]->Peek();
                 if (p && p->GetSize() <= m_deficitCounters[i])
                 {
                     m_deficitCounters[i] -= p->GetSize();
-                    // m_currentIndex = (i + 1) % n;
+
                     Ptr<Packet> sendPacket = classes[i]->Dequeue();
 
                     // only move m_currentIndex if 1. the queue is empty 2. next Packet is larger
                     // than deficit
                     if (tc->GetPackets() != 0 && tc->Peek()->GetSize() > m_deficitCounters[i])
                     {
-                        // m_deficitCounters[i] += m_quantums[i];
                         m_deficitCounters[i] += tc->GetWeight();
 
                         m_currentIndex = (i + 1) % n;
                     }
-                    // return classes[i]->Dequeue();
+
                     return sendPacket;
                 }
                 else
                 {
-                    // m_deficitCounters[i] += m_quantums[i];
                     m_deficitCounters[i] += tc->GetWeight();
 
                     m_currentIndex = (i + 1) % n;

@@ -9,6 +9,7 @@
 
 #include <fstream>
 
+// Use nlohmann JSON library
 using json = nlohmann::json;
 
 namespace ns3
@@ -19,6 +20,15 @@ static Ptr<Filter> CreateFilter(const json& filterConf);
 static Ptr<FilterElement> CreateFilterElement(const json& filterElementConf);
 static Ipv4Mask MakeIpv4MaskFromPrefixLength(uint8_t prefixLength);
 
+/**
+ * @brief Initialize a StrictPriorityQueue instance from a JSON config file.
+ *
+ * This method parses the JSON config file and dynamically creates multiple TrafficClass
+ * instances with filters and priority levels, then adds them to the SPQ scheduler.
+ *
+ * @param spq Pointer to the StrictPriorityQueue to be configured.
+ * @param filepath Path to the JSON configuration file.
+ */
 void
 QoSInitializer::InitializeSpqFromJson(Ptr<StrictPriorityQueue> spq, const std::string& filepath)
 {
@@ -52,6 +62,14 @@ QoSInitializer::InitializeSpqFromJson(Ptr<StrictPriorityQueue> spq, const std::s
     }
 }
 
+/**
+ * @brief Initialize a DrrQueue instance from a JSON config file.
+ *
+ * Each TrafficClass is created with a weight, filters, and maxPackets value.
+ *
+ * @param drr Pointer to the DrrQueue to be configured.
+ * @param filepath Path to the JSON configuration file.
+ */
 void
 QoSInitializer::InitializeDrrFromJson(Ptr<DrrQueue> drr, const std::string& filepath)
 {
@@ -82,19 +100,23 @@ QoSInitializer::InitializeDrrFromJson(Ptr<DrrQueue> drr, const std::string& file
 
         drr->AddTrafficClass(tc);
 
-        // Add quantum config in m_quantums
-        // const auto& quantumJson = queueConf["quantum"];
-        // drr->AddQuantum(quantumJson.get<u_int32_t>());
     }
 }
 
+/**
+ * @brief Construct a Filter object from a list of FilterElements.
+ *
+ * Each Filter is composed of one or more FilterElements (e.g., match on IP or port).
+ *
+ * @param filterConf The JSON array representing a filter (AND group of elements).
+ * @return Ptr<Filter> The constructed Filter object.
+ */
 static Ptr<Filter>
 CreateFilter(const json& filterConf)
 {
     ObjectFactory filterFactory;
     filterFactory.SetTypeId("ns3::Filter");
 
-    // Ptr<Filter> filter = filterFactory.Create();
     Ptr<Filter> filter = DynamicCast<Filter>(filterFactory.Create());
 
     for (const auto& filterElementConf : filterConf)
@@ -106,6 +128,14 @@ CreateFilter(const json& filterConf)
     return filter;
 }
 
+/**
+ * @brief Create a FilterElement based on the "type" field from JSON.
+ *
+ * This function supports matching on IP addresses, port numbers, masks, and protocol numbers.
+ *
+ * @param filterElementConf JSON object describing one matching condition.
+ * @return Ptr<FilterElement> A fully constructed filter element.
+ */
 static Ptr<FilterElement>
 CreateFilterElement(const json& filterElementConf)
 {
@@ -134,7 +164,6 @@ CreateFilterElement(const json& filterElementConf)
         feFactory.Set("value", UintegerValue(valueJson.get<uint32_t>()));
     }
 
-    // Ptr<FilterElement> filterElement = feFactory.Create();
     Ptr<FilterElement> filterElement = DynamicCast<FilterElement>(feFactory.Create());
 
     return filterElement;

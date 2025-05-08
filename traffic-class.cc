@@ -48,12 +48,21 @@ TrafficClass::TrafficClass()
 {
 }
 
+/**
+ * @brief Returns true if this traffic class is the default fallback class
+ */
 bool
 TrafficClass::IsDefault() const
 {
     return isDefault;
 }
 
+/**
+ * @brief Attempts to enqueue a packet into the traffic class
+ *
+ * @param p Packet to enqueue
+ * @return true if successful, false if the queue is full
+ */
 bool
 TrafficClass::Enqueue(Ptr<ns3::Packet> p)
 {
@@ -70,6 +79,11 @@ TrafficClass::Enqueue(Ptr<ns3::Packet> p)
     return true;
 }
 
+/**
+ * @brief Dequeues and returns the next packet in the queue
+ *
+ * @return Ptr to the dequeued packet, or nullptr if queue is empty
+ */
 Ptr<Packet>
 TrafficClass::Dequeue()
 {
@@ -85,6 +99,12 @@ TrafficClass::Dequeue()
     return p;
 }
 
+/**
+ * @brief Check if the packet matches any of the configured filters
+ *
+ * @param p Packet to check
+ * @return true if any filter matches, false otherwise
+ */
 bool
 TrafficClass::Match(Ptr<Packet> p) const
 {
@@ -97,12 +117,20 @@ TrafficClass::Match(Ptr<Packet> p) const
     return false;
 }
 
+/**
+ * @brief Returns the number of packets currently in the queue
+ */
 uint32_t
 TrafficClass::GetPackets() const
 {
     return packets;
 }
 
+/**
+ * @brief Returns the front packet in the queue without removing it
+ *
+ * @return Ptr to the packet, or nullptr if queue is empty
+ */
 Ptr<Packet>
 TrafficClass::Peek() const
 {
@@ -112,18 +140,29 @@ TrafficClass::Peek() const
     return m_queue.front();
 }
 
+/**
+ * @brief Returns the priority level assigned to this traffic class
+ */
 uint32_t
 TrafficClass::GetPriorityLevel() const
 {
     return priorityLevel;
 }
 
+/**
+ * @brief Returns the quantum/weight assigned to this traffic class
+ */
 uint32_t
 TrafficClass::GetWeight() const
 {
     return weight;
 }
 
+/**
+ * @brief Adds a new filter to this traffic class
+ *
+ * @param filter Ptr to a filter instance
+ */
 void
 TrafficClass::AddFilter(Ptr<Filter> filter)
 {

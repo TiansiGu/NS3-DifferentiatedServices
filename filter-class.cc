@@ -2,6 +2,7 @@
 
 namespace ns3
 {
+// Register Filter as an ns-3 object with runtime type information
 NS_OBJECT_ENSURE_REGISTERED(Filter);
 
 TypeId
@@ -15,6 +16,15 @@ Filter::Filter()
 {
 }
 
+/**
+ * @brief Evaluates whether a packet matches all filter elements.
+ *
+ * This method implements a logical AND over all FilterElement instances
+ * in the filter. The packet must match all conditions to pass.
+ *
+ * @param p The packet to test against the filter.
+ * @return true if all FilterElement conditions are satisfied, false otherwise.
+ */
 bool
 Filter::Match(Ptr<Packet> p) const
 {
@@ -27,6 +37,11 @@ Filter::Match(Ptr<Packet> p) const
     return true;
 }
 
+/**
+ * @brief Adds a FilterElement (a basic matching condition) to this filter.
+ *
+ * @param filterElement The FilterElement to be added.
+ */
 void
 Filter::AddFilterElement(Ptr<FilterElement> filterElement)
 {

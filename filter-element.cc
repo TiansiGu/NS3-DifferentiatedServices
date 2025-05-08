@@ -176,6 +176,9 @@ ProtocolNumber::ProtocolNumber()
 }
 
 /* Method Implementations*/
+/**
+ * @brief Match packets by exact source IP address.
+ */
 bool
 SourceIpAddress::Match(Ptr<Packet> p) const
 {
@@ -199,6 +202,9 @@ SourceIpAddress::Match(Ptr<Packet> p) const
     return false;
 }
 
+/**
+ * @brief Match packets whose source IP falls within a given subnet.
+ */
 bool
 SourceMask::Match(Ptr<Packet> p) const
 {
@@ -220,6 +226,9 @@ SourceMask::Match(Ptr<Packet> p) const
     return false;
 }
 
+/**
+ * @brief Match packets by source port number (UDP or TCP).
+ */
 bool
 SourcePortNumber::Match(Ptr<Packet> p) const
 {
@@ -253,6 +262,9 @@ SourcePortNumber::Match(Ptr<Packet> p) const
     return false;
 }
 
+/**
+ * @brief Match packets by exact destination IP address.
+ */
 bool
 DestinationIpAddress::Match(Ptr<Packet> p) const
 {
@@ -273,6 +285,9 @@ DestinationIpAddress::Match(Ptr<Packet> p) const
     return false;
 }
 
+/**
+ * @brief Match packets whose destination IP falls within a given subnet.
+ */
 bool
 DestinationMask::Match(Ptr<Packet> p) const
 {
@@ -294,6 +309,9 @@ DestinationMask::Match(Ptr<Packet> p) const
     return false;
 }
 
+/**
+ * @brief Match packets by destination port number (UDP or TCP).
+ */
 bool
 DestinationPortNumber::Match(Ptr<Packet> p) const
 {
@@ -330,18 +348,11 @@ DestinationPortNumber::Match(Ptr<Packet> p) const
     }
     return false;
 
-    // uint8_t buffer[26];  // 只要到第25位，开26字节保险
-    // p->CopyData(buffer, sizeof(buffer));  // 不破坏原Packet，拷贝前26字节出来
-
-    // uint16_t dstPort = (buffer[24] << 8) | buffer[25]; // 24是高字节，25是低字节（大端序）
-
-    // NS_LOG_UNCOND("Hardcoded extracted dest port: " << dstPort << " expected: " << value);
-
-    // return dstPort == value;
-
-    // return true;
 }
 
+/**
+ * @brief Match packets by IP protocol number (e.g., TCP=6, UDP=17).
+ */
 bool
 ProtocolNumber::Match(Ptr<Packet> p) const
 {

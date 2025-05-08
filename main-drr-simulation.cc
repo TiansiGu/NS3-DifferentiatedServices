@@ -80,7 +80,7 @@ SetupDrrTopology(std::string configFile)
 int
 main(int argc, char* argv[])
 {
-    std::string drrConfig = "/home/kexin/ns-3-dev/scratch/NS3-DifferentiatedServices/drr.json";
+    std::string drrConfig = "";
     double simDuration = 50.0;
 
     // Parse CLI argument: --drrConfig=xxx.json
