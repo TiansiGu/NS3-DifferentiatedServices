@@ -34,7 +34,6 @@ QoSInitializer::InitializeSpqFromJson(Ptr<StrictPriorityQueue> spq, const std::s
 {
     json config = LoadJson(filepath);
 
-    NS_LOG_UNCOND("Json file loaded");
 
     for (const auto& queueConf : config["queues"])
     {
@@ -48,12 +47,10 @@ QoSInitializer::InitializeSpqFromJson(Ptr<StrictPriorityQueue> spq, const std::s
         const auto& priorityLevelJson = queueConf["priorityLevel"];
         tcFactory.Set("priorityLevel", UintegerValue(priorityLevelJson.get<uint32_t>()));
 
-        // Ptr<TrafficClass> tc = tcFactory.Create();
         Ptr<TrafficClass> tc = DynamicCast<TrafficClass>(tcFactory.Create());
 
         for (const auto& filterConf : queueConf["filters"])
         {
-            NS_LOG_UNCOND("Create filters");
             Ptr<Filter> filter = CreateFilter(filterConf);
             tc->AddFilter(filter);
         }
@@ -75,7 +72,6 @@ QoSInitializer::InitializeDrrFromJson(Ptr<DrrQueue> drr, const std::string& file
 {
     json config = LoadJson(filepath);
 
-    NS_LOG_UNCOND("Json file loaded");
 
     for (const auto& queueConf : config["queues"])
     {
@@ -93,7 +89,6 @@ QoSInitializer::InitializeDrrFromJson(Ptr<DrrQueue> drr, const std::string& file
 
         for (const auto& filterConf : queueConf["filters"])
         {
-            NS_LOG_UNCOND("Create filters");
             Ptr<Filter> filter = CreateFilter(filterConf);
             tc->AddFilter(filter);
         }
@@ -173,7 +168,7 @@ CreateFilterElement(const json& filterElementConf)
 static json
 LoadJson(const std::string& filepath)
 {
-    NS_LOG_UNCOND("Trying to read json file...");
+
     std::ifstream f(filepath);
     return json::parse(f);
 }

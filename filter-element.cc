@@ -182,7 +182,7 @@ ProtocolNumber::ProtocolNumber()
 bool
 SourceIpAddress::Match(Ptr<Packet> p) const
 {
-    NS_LOG_UNCOND("Trying to match source ip ");
+
     // Remove PPP header
     Ptr<Packet> pCopy = p->Copy();
     PppHeader pppHeader;
@@ -195,8 +195,8 @@ SourceIpAddress::Match(Ptr<Packet> p) const
     Ipv4Header header;
     if (pCopy->PeekHeader(header))
     {
-        NS_LOG_UNCOND("IP address value: " << value);
-        NS_LOG_UNCOND("IP address: " << header.GetSource());
+        // NS_LOG_UNCOND("IP address value: " << value);
+        // NS_LOG_UNCOND("IP address: " << header.GetSource());
         return header.GetSource() == value;
     }
     return false;
@@ -338,8 +338,7 @@ DestinationPortNumber::Match(Ptr<Packet> p) const
 
     if (pCopy->PeekHeader(udp))
     {
-        // NS_LOG_UNCOND("Check dest port value " << value);
-        // NS_LOG_UNCOND("Check dest port GetDestinationPort " << udp.GetDestinationPort());
+
         return udp.GetDestinationPort() == value;
     }
     else if (pCopy->PeekHeader(tcp))

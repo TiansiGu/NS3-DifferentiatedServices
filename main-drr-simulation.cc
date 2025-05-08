@@ -15,7 +15,6 @@
 
 using namespace ns3;
 
-// NS_LOG_COMPONENT_DEFINE("MainDrrSimulation");
 
 // Global containers
 NodeContainer nodes;
@@ -34,7 +33,7 @@ Ipv4InterfaceContainer if01, if12;
 void
 SetupDrrTopology(std::string configFile)
 {
-    NS_LOG_UNCOND("Start to set topology...");
+
     nodes.Create(3);
 
     PointToPointHelper p2p01, p2p12;
@@ -64,13 +63,6 @@ SetupDrrTopology(std::string configFile)
 
     ipv4.SetBase("10.0.1.0", "255.255.255.0");
     if12 = ipv4.Assign(dev12);
-
-    // Create SPQ queue from config file and attach to router's outgoing device
-    // Ptr<Queue<Packet>> spqQueue = CreateSpqQueueFromJson(configFile);
-    // Ptr<PointToPointNetDevice> routerDev = dev12.Get(0)->GetObject<PointToPointNetDevice>();
-    // routerDev->SetQueue(spqQueue);
-
-    // p2p12.SetQueue("ns3::StrictPriorityQueue<Packet>", "Config", StringValue(configFile));
 
     // Enable packet capture
     p2p01.EnablePcap("drr-node0-node1", dev01, true);

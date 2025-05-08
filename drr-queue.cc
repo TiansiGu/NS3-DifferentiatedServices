@@ -53,7 +53,7 @@ DrrQueue::GetTypeId()
 void
 DrrQueue::DoInitialize()
 {
-    NS_LOG_UNCOND("DRR DoInitialize start");
+    // NS_LOG_UNCOND("DRR DoInitialize start");
     DiffServ::DoInitialize();
     QoSInitializer::InitializeDrrFromJson(this, m_configFile);
     m_deficitCounters.resize(GetTrafficClasses().size(), 0);

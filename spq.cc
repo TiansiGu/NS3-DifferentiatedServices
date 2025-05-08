@@ -12,7 +12,7 @@ NS_OBJECT_ENSURE_REGISTERED(StrictPriorityQueue);
 StrictPriorityQueue::StrictPriorityQueue()
 {
     // Empty initialization: c++ automatically initializes empty vector
-    NS_LOG_UNCOND("Create empty SPQ");
+    // NS_LOG_UNCOND("Create empty SPQ");
 }
 
 TypeId
@@ -39,7 +39,7 @@ StrictPriorityQueue::GetTypeId()
 void
 StrictPriorityQueue::DoInitialize()
 {
-    NS_LOG_UNCOND("SPQ DoInitialize start");
+    // NS_LOG_UNCOND("SPQ DoInitialize start");
     DiffServ::DoInitialize();
     QoSInitializer::InitializeSpqFromJson(this, m_configFile);
 }
