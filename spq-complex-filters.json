@@ -3,7 +3,7 @@
     "queues": [
         {
             "maxPackets": 3000,
-            "isDefault": false,
+            "isDefault": true,
             "priorityLevel": 1,
             "filters": [
                 [
@@ -45,7 +45,7 @@
         },
         {
             "maxPackets": 3000,
-            "isDefault": true,
+            "isDefault": false,
             "priorityLevel": 2,
             "filters": [
                 [

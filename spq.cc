@@ -32,6 +32,19 @@ StrictPriorityQueue::GetTypeId()
 }
 
 /**
+ * @brief Initialization hook called at simulation startup.
+ *
+ * Parses the JSON configuration file and creates the configured traffic classes.
+ */
+void
+StrictPriorityQueue::DoInitialize()
+{
+    NS_LOG_UNCOND("SPQ DoInitialize start");
+    DiffServ::DoInitialize();
+    QoSInitializer::InitializeSpqFromJson(this, m_configFile);
+}
+
+/**
  * @brief Classify an incoming packet into a traffic class index based on filter rules.
  *
  * First matches filters; if no match is found, returns the index of the default queue.
@@ -73,21 +86,16 @@ StrictPriorityQueue::Classify(Ptr<Packet> p)
 Ptr<Packet>
 StrictPriorityQueue::Schedule()
 {
-    const auto& q_class = GetTrafficClasses();
-
-    for (uint32_t i = 0; i < q_class.size(); ++i)
+    int scheduleIndex = GetQueueForSchedule();
+    if (scheduleIndex == -1)
     {
-        Ptr<TrafficClass> queue_class = q_class[i];
-
-        if (queue_class->GetPackets() > 0)
-        {
-            Ptr<Packet> pkt = queue_class->Dequeue();
-            return pkt;
-        }
+        NS_LOG_UNCOND("No non-empty queue found, returning nullptr");
+        return nullptr;
     }
 
-    NS_LOG_UNCOND("No non-empty queue found, returning nullptr");
-    return nullptr;
+    const std::vector<Ptr<TrafficClass>>& classes = GetTrafficClasses();
+    Ptr<TrafficClass> tc = classes[scheduleIndex];
+    return tc->Dequeue();
 }
 
 /**
@@ -110,17 +118,21 @@ StrictPriorityQueue::AddTrafficClass(Ptr<TrafficClass> trafficClass)
               });
 }
 
-/**
- * @brief Initialization hook called at simulation startup.
- *
- * Parses the JSON configuration file and creates the configured traffic classes.
- */
-void
-StrictPriorityQueue::DoInitialize()
+uint32_t
+StrictPriorityQueue::GetQueueForSchedule() const
 {
-    NS_LOG_UNCOND("SPQ DoInitialize start");
-    DiffServ::DoInitialize();
-    QoSInitializer::InitializeSpqFromJson(this, m_configFile);
+    const auto& q_class = GetTrafficClasses();
+
+    for (uint32_t i = 0; i < q_class.size(); ++i)
+    {
+        Ptr<TrafficClass> queue_class = q_class[i];
+
+        if (queue_class->GetPackets() > 0)
+        {
+            return i;
+        }
+    }
+    return -1;
 }
 
 } // namespace ns3

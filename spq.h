@@ -32,6 +32,8 @@ class StrictPriorityQueue : public DiffServ
   private:
     std::string m_configFile;
 
+    uint32_t GetQueueForSchedule() const override;
+
   protected:
     void DoInitialize() override;
 };

@@ -29,10 +29,12 @@ class DrrQueue : public DiffServ
     void DoInitialize() override;
 
   private:
-    std::vector<uint32_t> m_deficitCounters;
-    uint32_t m_currentIndex;
+    mutable std::vector<uint32_t> m_deficitCounters;
+    mutable uint32_t m_currentIndex;
 
     std::string m_configFile; // <- come from SetAttribute
+
+    uint32_t GetQueueForSchedule() const override;
 };
 
 } // namespace ns3

@@ -36,7 +36,6 @@ DiffServ::Dequeue()
     return Schedule();
 }
 
-
 /**
  * @brief Peek at the first packet from the first non-empty TrafficClass without removing it.
  *        Scans the traffic classes in order and returns the first non-empty one.
@@ -46,14 +45,14 @@ DiffServ::Dequeue()
 Ptr<const Packet>
 DiffServ::Peek() const
 {
-    for (const auto& tc : q_class)
+    int index = GetQueueForSchedule();
+    Ptr<TrafficClass> queue = q_class[index];
+    if (index < 0 && queue->GetPackets() == 0)
     {
-        if (tc->GetPackets() > 0)
-        {
-            return tc->Peek();
-        }
+        return nullptr;
     }
-    return nullptr; // all queue empty
+
+    return queue->Peek();
 }
 
 /**
