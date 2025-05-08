@@ -90,16 +90,16 @@ Each simulation run generates **four pcap files** to verify traffic behavior bef
 ###  SPQ Output Files
 
 - `spq-node0-node1-0-0` — Sender traffic before QoS
-- `spq-node0-node1-1-0` — Sender traffic before QoS 
+- `spq-node0-node1-1-0` — Sender traffic before QoS
 - `spq-node1-node2-2-0` — Receiver traffic after QoS
-- `spq-node1-node2-1-1` — Receiver traffic after QoS 
+- `spq-node1-node2-1-1` — Receiver traffic after QoS
 
 ###  DRR Output Files
 
 - `drr-node0-node1-0-0` — Sender traffic before QoS
-- `drr-node0-node1-1-0` — Sender traffic before QoS 
+- `drr-node0-node1-1-0` — Sender traffic before QoS
 - `drr-node1-node2-2-0` — Receiver traffic after QoS
-- `drr-node1-node2-1-1` — Receiver traffic after QoS 
+- `drr-node1-node2-1-1` — Receiver traffic after QoS
 
 These pcap files allow you to observe:
 

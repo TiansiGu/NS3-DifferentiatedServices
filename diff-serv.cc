@@ -6,13 +6,14 @@ namespace ns3
 bool
 DiffServ::Enqueue(Ptr<Packet> p)
 {
-    // NS_LOG_UNCOND("Enqueue packet UID: " << p->GetUid() << " Size: " << p->GetSize() << " Ptr: " << p);
+    // NS_LOG_UNCOND("Enqueue packet UID: " << p->GetUid() << " Size: " << p->GetSize() << " Ptr: "
+    // << p);
     uint32_t index = Classify(p);
     NS_LOG_UNCOND("enqueue to index" << index);
     Ptr<TrafficClass> queue_class = q_class.at(index);
     // NS_LOG_UNCOND("queue class size " << q_class.size());
-    // NS_LOG_UNCOND("Enqueue packet UID22222: " << p->GetUid() << " Size: " << p->GetSize() << " Ptr: " << p);
-    
+    // NS_LOG_UNCOND("Enqueue packet UID22222: " << p->GetUid() << " Size: " << p->GetSize() << "
+    // Ptr: " << p);
 
     return queue_class->Enqueue(p);
 }
@@ -23,7 +24,6 @@ DiffServ::Dequeue()
     NS_LOG_UNCOND("start dequeue");
     return Schedule();
 }
-
 
 // peek the first packet from the first non-empty TrafficClass
 Ptr<const Packet>

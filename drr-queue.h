@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: GPL-2.0-only
  *
- * Author: Kexin Dai, Tiansi Gu
+ * Author: Kexin Dai <kdai3@dons.usfca.edu>, Tiansi Gu <tgu10@dons.usfca.edu>
  */
 
 #ifndef DRR_QUEUE_H
@@ -29,7 +29,6 @@ class DrrQueue : public DiffServ
     void DoInitialize() override;
 
   private:
-
     std::vector<uint32_t> m_deficitCounters;
     uint32_t m_currentIndex;
 

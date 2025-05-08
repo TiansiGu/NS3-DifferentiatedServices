@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: GPL-2.0-only
  *
- * Author: Kexin Dai, Tiansi Gu <tgu10@dons.usfca.edu>
+ * Author: Kexin Dai <kdai3@dons.usfca.edu>, Tiansi Gu <tgu10@dons.usfca.edu>
  */
 
 #ifndef STRICT_PRIORITY_QUEUE_H

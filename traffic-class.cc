@@ -43,9 +43,8 @@ TrafficClass::GetTypeId()
     return tid;
 }
 
-
 TrafficClass::TrafficClass()
-  : packets(0)  
+    : packets(0)
 {
 }
 
@@ -64,8 +63,8 @@ TrafficClass::Enqueue(Ptr<ns3::Packet> p)
 
     m_queue.push(p);
     packets++;
-    // NS_LOG_UNCOND("TrafficClass Enqueue packet UID: " << p->GetUid() << " size: " << p->GetSize() << " Ptr: " << p);
-
+    // NS_LOG_UNCOND("TrafficClass Enqueue packet UID: " << p->GetUid() << " size: " << p->GetSize()
+    // << " Ptr: " << p);
 
     // NS_LOG_UNCOND("End of  TrafficClass");
     return true;
@@ -78,7 +77,8 @@ TrafficClass::Dequeue()
         return nullptr;
 
     Ptr<Packet> p = m_queue.front();
-    // NS_LOG_UNCOND("Dequeue packet UID in TrafficClass: " << p->GetUid() << " Size: " << p->GetSize() << " Ptr: " << p);
+    // NS_LOG_UNCOND("Dequeue packet UID in TrafficClass: " << p->GetUid() << " Size: " <<
+    // p->GetSize() << " Ptr: " << p);
 
     m_queue.pop();
     packets--;

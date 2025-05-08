@@ -1,5 +1,6 @@
 
 #include "drr-queue.h"
+#include "qos-initializer.h"
 
 #include "ns3/applications-module.h"
 #include "ns3/core-module.h"
@@ -9,7 +10,6 @@
 #include "ns3/point-to-point-module.h"
 #include "ns3/queue.h"
 #include "ns3/traffic-control-module.h"
-#include "qos-initializer.h"
 
 #include <iostream>
 
@@ -24,16 +24,16 @@ Ipv4InterfaceContainer if01, if12;
 
 /**
  * @brief Set up a 3-node topology and attach a DRR queue to the router
- * 
+ *
  * Topology:
  *   node0 --- node1 --- node2
  *   sender    router    receiver
- * 
+ *
  * The router's outgoing link uses a DRR queue, initialized from JSON config.
  */
-void SetupDrrTopology(std::string configFile)
+void
+SetupDrrTopology(std::string configFile)
 {
-
     NS_LOG_UNCOND("Start to set topology...");
     nodes.Create(3);
 
@@ -77,7 +77,8 @@ void SetupDrrTopology(std::string configFile)
     p2p12.EnablePcap("drr-node1-node2", dev12, true);
 }
 
-int main(int argc, char *argv[])
+int
+main(int argc, char* argv[])
 {
     std::string drrConfig = "/home/kexin/ns-3-dev/scratch/NS3-DifferentiatedServices/drr.json";
     double simDuration = 50.0;

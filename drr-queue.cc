@@ -51,7 +51,6 @@ DrrQueue::DoInitialize()
     QoSInitializer::InitializeDrrFromJson(this, m_configFile);
     // m_deficitCounters.resize(m_quantums.size(), 0);
     m_deficitCounters.resize(GetTrafficClasses().size(), 0);
-
 }
 
 uint32_t
@@ -133,7 +132,6 @@ DrrQueue::Schedule()
                     m_currentIndex = (i + 1) % n;
                 }
             }
-
         }
 
         if (!anyQueueHasPacket)
@@ -144,6 +142,5 @@ DrrQueue::Schedule()
         // if not enough deficit, try next round
     }
 }
-
 
 } // namespace ns3
