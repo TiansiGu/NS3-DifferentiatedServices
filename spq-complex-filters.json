@@ -1,0 +1,83 @@
+{
+    "type": "SPQ",
+    "queues": [
+        {
+            "maxPackets": 3000,
+            "isDefault": false,
+            "priorityLevel": 1,
+            "filters": [
+                [
+                    {
+                        "type": "DestinationPortNumber",
+                        "value": 7001
+                    },
+                    {
+                        "type": "SourceIpAddress",
+                        "value": "10.0.0.1"
+                    },
+                    {
+                        "type": "ProtocolNumber",
+                        "value": 6
+                    }
+                ],
+                [
+                    {
+                        "type": "SourcePortNumber",
+                        "value": 8888
+                    }
+                ],
+                [
+                    {
+                        "type": "SourceMask",
+                        "addr": "10.0.0.0",
+                        "value": 31
+                    },
+                    {
+                        "type": "DestinationPortNumber",
+                        "value": 7001
+                    },
+                    {
+                        "type": "DestinationIpAddress",
+                        "value": "10.0.1.2"
+                    }
+                ]
+            ]
+        },
+        {
+            "maxPackets": 3000,
+            "isDefault": true,
+            "priorityLevel": 2,
+            "filters": [
+                [
+                    {
+                        "type": "SourcePortNumber",
+                        "value": 7000
+                    },
+                    {
+                        "type": "SourceIpAddress",
+                        "value": "10.0.0.1"
+                    }
+                ],
+                [
+                    {
+                        "type": "DestinationPortNumber",
+                        "value": 7000
+                    },
+                    {
+                        "type": "SourceIpAddress",
+                        "value": "10.0.0.1"
+                    },
+                    {
+                        "type": "DestinationMask",
+                        "addr": "10.0.1.0",
+                        "value": 30
+                    },
+                    {
+                        "type": "ProtocolNumber",
+                        "value": 17
+                    }
+                ]
+            ]
+        }
+    ]
+}

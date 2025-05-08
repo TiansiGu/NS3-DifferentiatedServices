@@ -1,0 +1,100 @@
+{
+    "type": "DRR",
+    "queues": [
+        {
+            "maxPackets": 300,
+            "isDefault": false,
+            "weight": 3000,
+            "filters": [
+                [
+                    {
+                        "type": "DestinationPortNumber",
+                        "value": 5000
+                    },
+                    {
+                        "type": "SourceIpAddress",
+                        "value": "10.0.0.1"
+                    },
+                    {
+                        "type": "ProtocolNumber",
+                        "value": 6
+                    }
+                ],
+                [
+                    {
+                        "type": "SourcePortNumber",
+                        "value": 8888
+                    }
+                ],
+                [
+                    {
+                        "type": "DestinationPortNumber",
+                        "value": 5000
+                    },
+                    {
+                        "type": "SourceMask",
+                        "addr": "10.0.0.0",
+                        "value": 31
+                    },
+                    {
+                        "type": "DestinationIpAddress",
+                        "value": "10.0.1.2"
+                    }
+                ]
+            ]
+        },
+        {
+            "maxPackets": 300,
+            "isDefault": false,
+            "weight": 2000,
+            "filters": [
+                [
+                    {
+                        "type": "DestinationPortNumber",
+                        "value": 5001
+                    },
+                    {
+                        "type": "SourceIpAddress",
+                        "value": "10.0.0.1"
+                    },
+                    {
+                        "type": "ProtocolNumber",
+                        "value": 17
+                    }
+                ],
+                [
+                    {
+                        "type": "DestinationMask",
+                        "addr": "10.0.1.0",
+                        "value": 24
+                    },
+                    {
+                        "type": "ProtocolNumber",
+                        "value": 6
+                    }
+                ]
+            ]
+        },
+        {
+            "maxPackets": 300,
+            "isDefault": true,
+            "weight": 1000,
+            "filters": [
+                [
+                    {
+                        "type": "DestinationPortNumber",
+                        "value": 5002
+                    },
+                    {
+                        "type": "SourceIpAddress",
+                        "value": "10.0.0.1"
+                    },
+                    {
+                        "type": "ProtocolNumber",
+                        "value": 17
+                    }
+                ]
+            ]
+        }
+    ]
+}
