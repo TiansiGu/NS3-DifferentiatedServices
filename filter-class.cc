@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) YEAR COPYRIGHTHOLDER
+ *
+ * SPDX-License-Identifier: GPL-2.0-only
+ *
+ * Author: Kexin Dai <kdai3@dons.usfca.edu>, Tiansi Gu <tgu10@dons.usfca.edu>
+ */
+
 #include "filter-class.h"
 
 namespace ns3
@@ -5,7 +13,11 @@ namespace ns3
 // Register Filter as an ns-3 object with runtime type information
 NS_OBJECT_ENSURE_REGISTERED(Filter);
 
-// TypeId registration with ns-3
+/**
+ * @brief Registers the Filter class with the ns-3 type system.
+ *
+ * @return TypeId of the Filter class.
+ */
 TypeId
 Filter::GetTypeId()
 {

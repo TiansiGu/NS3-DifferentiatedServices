@@ -1,4 +1,12 @@
+/*
+ * Copyright (c) YEAR COPYRIGHTHOLDER
+ *
+ * SPDX-License-Identifier: GPL-2.0-only
+ *
+ * Author: Kexin Dai <kdai3@dons.usfca.edu>, Tiansi Gu <tgu10@dons.usfca.edu>
+ */
 
+#include "qos-initializer.h"
 #include "spq.h"
 
 #include "ns3/applications-module.h"
@@ -9,8 +17,6 @@
 #include "ns3/point-to-point-module.h"
 #include "ns3/queue.h"
 #include "ns3/traffic-control-module.h"
-// #include "creators/qos-initializer.h"
-#include "qos-initializer.h"
 
 #include <iostream>
 
@@ -31,7 +37,6 @@ Ipv4InterfaceContainer if01, if12;
 void
 SetupSpqTopology(std::string configFile)
 {
-
     nodes.Create(3);
 
     PointToPointHelper p2p01, p2p12;
@@ -70,8 +75,6 @@ SetupSpqTopology(std::string configFile)
 int
 main(int argc, char* argv[])
 {
-
-
     std::string spqConfig = "";
     double simDuration = 50.0;
 

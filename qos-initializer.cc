@@ -1,6 +1,13 @@
+/*
+ * Copyright (c) YEAR COPYRIGHTHOLDER
+ *
+ * SPDX-License-Identifier: GPL-2.0-only
+ *
+ * Author: Kexin Dai <kdai3@dons.usfca.edu>, Tiansi Gu <tgu10@dons.usfca.edu>
+ */
+
 #include "qos-initializer.h"
 
-// #include "../spq.h"
 #include "./spq.h"
 #include "json.hpp"
 
@@ -30,7 +37,7 @@ static Ipv4Mask MakeIpv4MaskFromPrefixLength(uint8_t prefixLength);
  * @param filepath Path to the JSON configuration file.
  */
 void
-QoSInitializer::InitializeSpqFromJson(Ptr<StrictPriorityQueue> spq, const std::string& filepath)
+QosInitializer::InitializeSpqFromJson(Ptr<StrictPriorityQueue> spq, const std::string& filepath)
 {
     json config = LoadJson(filepath);
 
@@ -67,7 +74,7 @@ QoSInitializer::InitializeSpqFromJson(Ptr<StrictPriorityQueue> spq, const std::s
  * @param filepath Path to the JSON configuration file.
  */
 void
-QoSInitializer::InitializeDrrFromJson(Ptr<DrrQueue> drr, const std::string& filepath)
+QosInitializer::InitializeDrrFromJson(Ptr<DrrQueue> drr, const std::string& filepath)
 {
     json config = LoadJson(filepath);
 

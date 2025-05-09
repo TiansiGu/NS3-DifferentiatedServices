@@ -1,6 +1,5 @@
 #include "spq.h"
 
-// #include "creators/qos-initializer.h"
 #include "qos-initializer.h"
 
 #include "ns3/string.h"
@@ -41,7 +40,7 @@ StrictPriorityQueue::DoInitialize()
 {
     // NS_LOG_UNCOND("SPQ DoInitialize start");
     DiffServ::DoInitialize();
-    QoSInitializer::InitializeSpqFromJson(this, m_configFile);
+    QosInitializer::InitializeSpqFromJson(this, m_configFile);
 }
 
 /**

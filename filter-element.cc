@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) YEAR COPYRIGHTHOLDER
+ *
+ * SPDX-License-Identifier: GPL-2.0-only
+ *
+ * Author: Kexin Dai <kdai3@dons.usfca.edu>, Tiansi Gu <tgu10@dons.usfca.edu>
+ */
+
 #include "filter-element.h"
 
 #include "ns3/log.h"

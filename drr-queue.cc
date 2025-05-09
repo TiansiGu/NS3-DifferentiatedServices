@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) YEAR COPYRIGHTHOLDER
+ *
+ * SPDX-License-Identifier: GPL-2.0-only
+ *
+ * Author: Kexin Dai <kdai3@dons.usfca.edu>, Tiansi Gu <tgu10@dons.usfca.edu>
+ */
+
 #include "drr-queue.h"
 
 #include "qos-initializer.h"
@@ -54,7 +62,7 @@ void
 DrrQueue::DoInitialize()
 {
     DiffServ::DoInitialize();
-    QoSInitializer::InitializeDrrFromJson(this, m_configFile);
+    QosInitializer::InitializeDrrFromJson(this, m_configFile);
     m_deficitCounters.resize(GetTrafficClasses().size(), 0);
 }
 
@@ -83,7 +91,8 @@ DrrQueue::Classify(Ptr<Packet> p)
 
 /**
  * @brief Schedules the next packet for transmission using the DRR algorithm.
- *        Internally calls GetQueueForSchedule to find the eligible class.
+ *        Internally calls GetQueueForSchedule to find the eligible class, remove from the head of
+ *        the queue in that class, and decrease deficits.
  * @return A pointer to the packet to be dequeued, or nullptr if all queues are empty.
  */
 Ptr<Packet>
@@ -125,7 +134,7 @@ DrrQueue::GetQueueForSchedule() const
             // Skip empty queues as they are not in the activate list
             if (tc->GetPackets() == 0)
             {
-                m_deficitCounters[m_currentIndex] = 0;
+                m_deficitCounters[m_currentIndex] = 0; // Set deficit to 0 for empty queue
                 m_currentIndex = (m_currentIndex + 1) % n;
                 continue;
             }
