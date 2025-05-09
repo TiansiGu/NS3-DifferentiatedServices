@@ -1,6 +1,6 @@
 # NS-3 Differentiated Services (DiffServ) QoS Project
 
-This project implements **Strict Priority Queueing (SPQ)** and **Deficit Round Robin (DRR)** mechanisms in the [ns-3 network simulator](https://www.nsnam.org/), using a common base class `DiffServ` to simulate differentiated services. It includes both simulation implementations and test topologies.
+This project implements **Strict Priority Queueing (SPQ)** and **Deficit Round Robin (DRR)** mechanisms in the [ns-3 network simulator](https://www.nsnam.org/)(ns-3.44), using a common base class `DiffServ` to simulate differentiated services. It includes both simulation implementations and test topologies.
 
 ## Project Structure
 
