@@ -25,14 +25,14 @@ class StrictPriorityQueue : public DiffServ
 
     Ptr<Packet> Schedule() override;
 
-    uint32_t Classify(Ptr<Packet> p) override;
+    int32_t Classify(Ptr<Packet> p) override;
 
     void AddTrafficClass(Ptr<TrafficClass> trafficClass) override;
 
   private:
     std::string m_configFile;
 
-    uint32_t GetQueueForSchedule() const override;
+    int32_t GetQueueForSchedule() const override;
 
   protected:
     void DoInitialize() override;

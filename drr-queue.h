@@ -23,7 +23,7 @@ class DrrQueue : public DiffServ
 
     Ptr<Packet> Schedule() override;
 
-    uint32_t Classify(Ptr<Packet> p) override;
+    int32_t Classify(Ptr<Packet> p) override;
 
   protected:
     void DoInitialize() override;
@@ -34,7 +34,7 @@ class DrrQueue : public DiffServ
 
     std::string m_configFile; // <- come from SetAttribute
 
-    uint32_t GetQueueForSchedule() const override;
+    int32_t GetQueueForSchedule() const override;
 };
 
 } // namespace ns3

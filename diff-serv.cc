@@ -7,16 +7,20 @@ namespace ns3
  * @brief Enqueue a packet into the appropriate TrafficClass queue.
  *
  * @param p The packet to enqueue.
- * @return true if enqueue succeeds; false if the sub-queue is full.
+ * @return true if enqueue succeeds; false if the packet doesn't match any queue, or the
+ * appropriate TrafficClass queue is full.
  */
 bool
 DiffServ::Enqueue(Ptr<Packet> p)
 {
+    int32_t index = Classify(p);
 
-    uint32_t index = Classify(p);
+    if (index < 0)
+    {
+        return false;
+    }
 
     Ptr<TrafficClass> queue_class = q_class.at(index);
-
 
     return queue_class->Enqueue(p);
 }
@@ -29,7 +33,6 @@ DiffServ::Enqueue(Ptr<Packet> p)
 Ptr<Packet>
 DiffServ::Dequeue()
 {
-    // NS_LOG_UNCOND("start dequeue");
     return Schedule();
 }
 
@@ -43,12 +46,13 @@ Ptr<const Packet>
 DiffServ::Peek() const
 {
     int index = GetQueueForSchedule();
-    Ptr<TrafficClass> queue = q_class[index];
-    if (index < 0 && queue->GetPackets() == 0)
+
+    if (index < 0 || q_class[index]->GetPackets() == 0)
     {
         return nullptr;
     }
 
+    Ptr<TrafficClass> queue = q_class[index];
     return queue->Peek();
 }
 

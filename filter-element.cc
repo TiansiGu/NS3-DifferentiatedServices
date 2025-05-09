@@ -182,7 +182,6 @@ ProtocolNumber::ProtocolNumber()
 bool
 SourceIpAddress::Match(Ptr<Packet> p) const
 {
-
     // Remove PPP header
     Ptr<Packet> pCopy = p->Copy();
     PppHeader pppHeader;
@@ -338,7 +337,6 @@ DestinationPortNumber::Match(Ptr<Packet> p) const
 
     if (pCopy->PeekHeader(udp))
     {
-
         return udp.GetDestinationPort() == value;
     }
     else if (pCopy->PeekHeader(tcp))
@@ -346,7 +344,6 @@ DestinationPortNumber::Match(Ptr<Packet> p) const
         return tcp.GetDestinationPort() == value;
     }
     return false;
-
 }
 
 /**

@@ -26,14 +26,14 @@ TrafficClass::GetTypeId()
                           MakeBooleanAccessor(&TrafficClass::isDefault),
                           MakeBooleanChecker())
 
-            // Register priorityLevel
-            .AddAttribute("priorityLevel",
+            // Register priority_level
+            .AddAttribute("priority_level",
                           "Priority level (higher number indicates higher priority)",
                           UintegerValue(0),
-                          MakeUintegerAccessor(&TrafficClass::priorityLevel),
+                          MakeUintegerAccessor(&TrafficClass::priority_level),
                           MakeUintegerChecker<uint32_t>())
 
-            // Register priorityLevel
+            // Register weight
             .AddAttribute("weight",
                           "quantum of the traffic clas",
                           UintegerValue(1000),
@@ -66,7 +66,6 @@ TrafficClass::IsDefault() const
 bool
 TrafficClass::Enqueue(Ptr<ns3::Packet> p)
 {
-
     if (packets == maxPackets)
         return false;
 
@@ -140,7 +139,7 @@ TrafficClass::Peek() const
 uint32_t
 TrafficClass::GetPriorityLevel() const
 {
-    return priorityLevel;
+    return priority_level;
 }
 
 /**

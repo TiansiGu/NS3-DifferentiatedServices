@@ -15,7 +15,6 @@
 
 using namespace ns3;
 
-
 // Global containers
 NodeContainer nodes;
 NetDeviceContainer dev01, dev12;
@@ -33,7 +32,6 @@ Ipv4InterfaceContainer if01, if12;
 void
 SetupDrrTopology(std::string configFile)
 {
-
     nodes.Create(3);
 
     PointToPointHelper p2p01, p2p12;

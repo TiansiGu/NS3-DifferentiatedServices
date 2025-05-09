@@ -52,7 +52,7 @@ StrictPriorityQueue::DoInitialize()
  * @param p The incoming packet
  * @return The index of the matching or default TrafficClass
  */
-u_int32_t
+int32_t
 StrictPriorityQueue::Classify(Ptr<Packet> p)
 {
     const auto& q_class = GetTrafficClasses();
@@ -74,6 +74,7 @@ StrictPriorityQueue::Classify(Ptr<Packet> p)
             return i;
         }
     }
+    return -1;
 }
 
 /**
@@ -125,7 +126,7 @@ StrictPriorityQueue::AddTrafficClass(Ptr<TrafficClass> trafficClass)
  *
  * @return Index of the selected traffic class, or -1 if all queues are empty.
  */
-uint32_t
+int32_t
 StrictPriorityQueue::GetQueueForSchedule() const
 {
     const auto& q_class = GetTrafficClasses();

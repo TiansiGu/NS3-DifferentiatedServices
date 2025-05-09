@@ -62,7 +62,7 @@ DrrQueue::DoInitialize()
  * @brief Classify incoming packets based on filters in TrafficClass.
  *        Returns the index of the first matching class, or the default class.
  */
-uint32_t
+int32_t
 DrrQueue::Classify(Ptr<Packet> p)
 {
     const std::vector<Ptr<TrafficClass>>& classes = GetTrafficClasses();
@@ -78,10 +78,8 @@ DrrQueue::Classify(Ptr<Packet> p)
         if (classes[i]->IsDefault())
             return i;
     }
-
-    return 0;
+    return -1;
 }
-
 
 /**
  * @brief Schedules the next packet for transmission using the DRR algorithm.
@@ -111,7 +109,7 @@ DrrQueue::Schedule()
  *        Iterates over the queue in a round-robin manner and updates deficit counters.
  * @return Index of the selected traffic class, or -1 if all queues are empty.
  */
-uint32_t
+int32_t
 DrrQueue::GetQueueForSchedule() const
 {
     const std::vector<Ptr<TrafficClass>>& classes = GetTrafficClasses();

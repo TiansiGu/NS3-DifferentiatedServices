@@ -22,7 +22,7 @@ class TrafficClass : public Object
     uint32_t packets;
     uint32_t maxPackets;
     double_t weight; // applicable if the QoS mechanism uses weights
-    uint32_t priorityLevel;
+    uint32_t priority_level;
     bool isDefault;                       // whether this queue is served as the default queue
     std::queue<Ptr<ns3::Packet>> m_queue; // the queue that holds packet waiting to be scheduled
     std::vector<Ptr<Filter>> filters;     // a collection of Filters

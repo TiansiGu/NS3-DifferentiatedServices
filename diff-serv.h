@@ -21,7 +21,7 @@ class DiffServ : public Queue<Packet>
   private:
     std::vector<Ptr<TrafficClass>> q_class; // a collection of Traffic Class
 
-    virtual uint32_t GetQueueForSchedule() const = 0;
+    virtual int32_t GetQueueForSchedule() const = 0;
 
   public:
     bool Enqueue(Ptr<Packet> p) override;
@@ -34,7 +34,7 @@ class DiffServ : public Queue<Packet>
 
     virtual Ptr<Packet> Schedule() = 0; // abstract method
 
-    virtual uint32_t Classify(Ptr<Packet> p) = 0; // abstract method
+    virtual int32_t Classify(Ptr<Packet> p) = 0; // abstract method
 
     virtual void AddTrafficClass(Ptr<TrafficClass> trafficClass);
 

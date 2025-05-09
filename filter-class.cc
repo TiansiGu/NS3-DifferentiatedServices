@@ -5,6 +5,7 @@ namespace ns3
 // Register Filter as an ns-3 object with runtime type information
 NS_OBJECT_ENSURE_REGISTERED(Filter);
 
+// TypeId registration with ns-3
 TypeId
 Filter::GetTypeId()
 {
