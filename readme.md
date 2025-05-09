@@ -1,34 +1,27 @@
 # NS-3 Differentiated Services (DiffServ) QoS Project
 
-This project implements **Strict Priority Queueing (SPQ)** and **Deficit Round Robin (DRR)** mechanisms in the [ns-3 network simulator](https://www.nsnam.org/)(ns-3.44), using a common base class `DiffServ` to simulate differentiated services. It includes both simulation implementations and test topologies.
+This project implements **Strict Priority Queueing (SPQ)** and **Deficit Round Robin (DRR)** mechanisms in the [ns-3 network simulator](https://www.nsnam.org/)(ns-3.44), using a common base class `DiffServ` to abstract logic of different differentiated services. It includes both simulation implementations and test topologies.
 
-## Project Structure
-
+## Project Structure & Build Guidance
+Have ns-3.44 library installed in your Ubuntu Virtual machine. In the root ns-3 directory, create a project folder under `scratch` folder:
+```
+mkdir scratch/NS3-DifferentiatedServices
+```
 Place **all source files and configuration files** inside the `scratch/NS3-DifferentiatedServices/` directory of your `ns-3-dev` workspace. The project includes:
 
-- `diff-serv.cc` / `diff-serv.h`: Base class for DiffServ behavior
-- `traffic-class.cc` / `traffic-class.h`: Per-class queue configuration
-- `filter.cc`/ `filter.h`, `filter-element.cc`/ `filter-element.h`: Packet classification filters
-- `spq.cc`/ `spq.h`, `drr-queue.cc`/ `drr-queue.h`: Implementations of SPQ and DRR
+- `diff-serv.cc`, `diff-serv.h`: Base class for DiffServ behaviors
+- `traffic-class.cc`, `traffic-class.h`: Per-class queue configuration
+- `filter.cc`, `filter.h`, `filter-element.cc`, `filter-element.h`: Packet classification filter module
+- `spq.cc`, `spq.h`: Implementation of SPQ
+- `drr-queue.cc`, `drr-queue.h`: Implementation of DRR
 - `main-spq-simulation.cc`: SPQ simulation runner
 - `main-drr-simulation.cc`: DRR simulation runner
-- `spq.json` / `drr.json`: Queue configuration files
-- `spq-complex-filters.json` / `drr-complex-filters.json`: Queue configuration files to test complex filters
-
-##  How to Compile and Run
+- `qos-initializer.cc`, `qos-initializer.h`: used to initialize `DiffServ` class in object factory design pattern
+- `json.hpp`: nlohmann json library file used to parse json configurations
+- `spq.json`, `drr.json`: Queue configuration files for simple filtering senarios
+- `spq-complex-filters.json` / `drr-complex-filters.json`: Queue configuration files to test every filter element and complex senarios
 
 Due to ns-3's limitation of supporting only **one `main()` function** at a time in the `scratch` folder, **rename the unused `main-*.cc` to `*.cc.bak`** before running the desired simulation.
-
-### Run DRR Simulation
-
-```bash
-# Rename SPQ simulation file to disable it
-mv scratch/NS3-DifferentiatedServices/main-spq-simulation.cc scratch/NS3-DifferentiatedServices/main-spq-simulation.cc.bak
-
-# Run DRR simulation
-./ns3 run scratch/NS3-DifferentiatedServices/main-drr-simulation --command-template="%s --drrConfig=/path/to/your/drr.json"
-
-```
 
 ### Run SPQ Simulation
 
@@ -42,6 +35,17 @@ mv scratch/NS3-DifferentiatedServices/main-spq-simulation.cc.bak scratch/NS3-Dif
 ./ns3 run scratch/NS3-DifferentiatedServices/main-spq-simulation --command-template="%s --spqConfig=/path/to/your/spq.json"
 ```
 
+### Run DRR Simulation
+
+```bash
+# Rename SPQ simulation file to disable it
+mv scratch/NS3-DifferentiatedServices/main-spq-simulation.cc scratch/NS3-DifferentiatedServices/main-spq-simulation.cc.bak
+mv scratch/NS3-DifferentiatedServices/main-drr-simulation.cc.bak scratch/NS3-DifferentiatedServices/main-drr-simulation.cc
+
+# Run DRR simulation
+./ns3 run scratch/NS3-DifferentiatedServices/main-drr-simulation --command-template="%s --drrConfig=/path/to/your/drr.json"
+
+```
 
 
 
@@ -56,7 +60,6 @@ mv scratch/NS3-DifferentiatedServices/main-spq-simulation.cc.bak scratch/NS3-Dif
 
 - Uses `weight` as the quantum for each traffic class.
 - Queues are served in round-robin order, consuming packets if within the deficit budget.
-- Each queue accumulates deficit in proportion to its weight.
 
 ---
 
@@ -76,19 +79,19 @@ The middle node is configured as a QoS-enabled router using either SPQ or DRR.
 - Two `BulkSend` applications: A and B.
 - Application A has higher priority than B.
 - A starts *after* B has begun transmitting.
-- Expected result: A should preempt B and gain most of the bandwidth due to higher priority.
+- Expected result: A should preempt B and gain all of the bandwidth due to higher priority.
 
 ### 🔍 DRR Verification
 
-- Three queues with quantum weights in a 3:2:1 ratio.
-- Three `BulkSend` applications started simultaneously, one per queue.
-- Expected result: The throughput distribution follows the weight ratio (e.g., App A > B > C).
+- Three queues with quantum in a 3:2:1 ratio.
+- Three `BulkSend` applications started simultaneously, each flow should be sorted into one queue.
+- Expected result: The throughput distribution follows the weight ratio, 3:2:1.
 
 ---
 
 ##  Output
 
-Each simulation run generates **four pcap files** to verify traffic behavior before and after the QoS router.
+Each simulation run generates **four pcap files** to verify traffic behavior before and after the DiffServ router.
 
 ###  SPQ Output Files
 
@@ -106,19 +109,19 @@ Each simulation run generates **four pcap files** to verify traffic behavior bef
 
 These pcap files allow you to observe:
 
-- **SPQ correctness** — Lower-priority flows yield bandwidth to higher-priority flows as expected.
-- **DRR fairness** — Flows receive bandwidth proportional to their assigned weights.
+- **SPQ correctness** — Lower-priority flows yield bandwidth to higher-priority flows as expected, and re-gain bandwidth after the higher-priority flow stops.
+- **DRR fairness** — When all three flows are active, they receive bandwidth in proportion to their assigned weights (3:2:1). Once the medium-weight flow stops transmitting, the remaining two flows share the bandwidth in a 3:1 ratio. Finally, when only the highest-weight flow remains, it gains the full available bandwidth.
 
-Use these captured files to draw plots as your primary validation.
+Use these captured files to generate plots as your primary validation.
 
 ## ⚠️ Notes on Packet Classification and Header Requirements
 
-The packet classification logic in this project **relies on the presence of a PPP header** (`ns3::PppHeader`) in every packet. This design simplifies header parsing by ensuring that all packets conform to a predictable structure before IP and transport layer fields are accessed.
+The packet classification logic in this project **relies on the presence of a PPP header** (`ns3::PppHeader`) in every packet. This design simplifies header parsing by ensuring that all packets conform to a predictable structure before network and transport layer fields are accessed.
 
 As a result:
 
 - **You must use `PointToPoint` links** in all simulations. These links attach `PppHeader` by default, enabling filters like `SourceIpAddress`, `DestinationPortNumber`, etc., to work correctly.
-- If you switch to other link types (e.g., `Csma`, `Wifi`), the classification may silently fail unless you rewrite the `Match()` methods to parse the appropriate link-layer headers.
+- If you switch to other link types (e.g., `Csma`, `Wifi`), the classification may silently fail unless you refractor the `Match()` methods in `FilterElement` to parse the appropriate link-layer headers.
 -  If `PppHeader` is not found, `FilterElement::Match()` will log an error and return `false`, meaning the packet may fall back to the default traffic class.
 
 This behavior is consistent across all `FilterElement` types and ensures deterministic filter logic when using `PointToPointHelper`.
