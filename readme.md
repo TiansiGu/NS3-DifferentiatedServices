@@ -13,6 +13,7 @@ Place **all source files and configuration files** inside the `scratch/NS3-Diffe
 - `main-spq-simulation.cc`: SPQ simulation runner
 - `main-drr-simulation.cc`: DRR simulation runner
 - `spq.json` / `drr.json`: Queue configuration files
+- `spq-complex-filters.json` / `drr-complex-filters.json`: Queue configuration files to test complex filters
 
 ##  How to Compile and Run
 
@@ -29,7 +30,7 @@ mv scratch/NS3-DifferentiatedServices/main-spq-simulation.cc scratch/NS3-Differe
 
 ```
 
-### Run DRR Simulation
+### Run SPQ Simulation
 
 ```bash
 
@@ -62,6 +63,8 @@ mv scratch/NS3-DifferentiatedServices/main-spq-simulation.cc.bak scratch/NS3-Dif
 ##  Simulation Setup
 
 Use a **3-node topology** with a bottleneck link:
+
+[node 0] --- [node 1] --- [node 2]
 
 [Host A] --- [QoS Router] --- [Host B]
 
@@ -107,6 +110,19 @@ These pcap files allow you to observe:
 - **DRR fairness** — Flows receive bandwidth proportional to their assigned weights.
 
 Use these captured files to draw plots as your primary validation.
+
+## ⚠️ Notes on Packet Classification and Header Requirements
+
+The packet classification logic in this project **relies on the presence of a PPP header** (`ns3::PppHeader`) in every packet. This design simplifies header parsing by ensuring that all packets conform to a predictable structure before IP and transport layer fields are accessed.
+
+As a result:
+
+- **You must use `PointToPoint` links** in all simulations. These links attach `PppHeader` by default, enabling filters like `SourceIpAddress`, `DestinationPortNumber`, etc., to work correctly.
+- If you switch to other link types (e.g., `Csma`, `Wifi`), the classification may silently fail unless you rewrite the `Match()` methods to parse the appropriate link-layer headers.
+-  If `PppHeader` is not found, `FilterElement::Match()` will log an error and return `false`, meaning the packet may fall back to the default traffic class.
+
+This behavior is consistent across all `FilterElement` types and ensures deterministic filter logic when using `PointToPointHelper`.
+
 
 ## Author
 
