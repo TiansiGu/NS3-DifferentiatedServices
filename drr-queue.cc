@@ -53,7 +53,6 @@ DrrQueue::GetTypeId()
 void
 DrrQueue::DoInitialize()
 {
-    // NS_LOG_UNCOND("DRR DoInitialize start");
     DiffServ::DoInitialize();
     QoSInitializer::InitializeDrrFromJson(this, m_configFile);
     m_deficitCounters.resize(GetTrafficClasses().size(), 0);
@@ -83,74 +82,12 @@ DrrQueue::Classify(Ptr<Packet> p)
     return 0;
 }
 
+
 /**
- * @brief DRR scheduling logic.
- *        Selects the next packet to transmit based on per-class deficits.
- *
- * @return The selected packet, or nullptr if all queues are empty.
+ * @brief Schedules the next packet for transmission using the DRR algorithm.
+ *        Internally calls GetQueueForSchedule to find the eligible class.
+ * @return A pointer to the packet to be dequeued, or nullptr if all queues are empty.
  */
-// Ptr<Packet>
-// DrrQueue::Schedule()
-// {
-//     const std::vector<Ptr<TrafficClass>>& classes = GetTrafficClasses();
-//     uint32_t n = classes.size();
-
-//     while (true)
-//     {
-//         bool anyQueueHasPacket = false;
-
-//         for (uint32_t offset = 0; offset < n; ++offset)
-//         {
-//             uint32_t i = m_currentIndex;
-//             Ptr<TrafficClass> tc = classes[i];
-
-//             // Skip empty queues
-//             if (tc->GetPackets() == 0)
-//             {
-//                 m_currentIndex = (m_currentIndex + 1) % n;
-//                 continue;
-//             }
-
-//             if (classes[i]->GetPackets() > 0)
-//             {
-//                 anyQueueHasPacket = true;
-
-//                 Ptr<Packet> p = classes[i]->Peek();
-//                 if (p && p->GetSize() <= m_deficitCounters[i])
-//                 {
-//                     m_deficitCounters[i] -= p->GetSize();
-
-//                     Ptr<Packet> sendPacket = classes[i]->Dequeue();
-
-//                     // only move m_currentIndex if 1. the queue is empty 2. next Packet is larger
-//                     // than deficit
-//                     if (tc->GetPackets() != 0 && tc->Peek()->GetSize() > m_deficitCounters[i])
-//                     {
-//                         m_deficitCounters[i] += tc->GetWeight();
-
-//                         m_currentIndex = (i + 1) % n;
-//                     }
-
-//                     return sendPacket;
-//                 }
-//                 else
-//                 {
-//                     m_deficitCounters[i] += tc->GetWeight();
-
-//                     m_currentIndex = (i + 1) % n;
-//                 }
-//             }
-//         }
-
-//         if (!anyQueueHasPacket)
-//         {
-//             return nullptr; // no packets
-//         }
-
-//         // if not enough deficit, try next round
-//     }
-// }
-
 Ptr<Packet>
 DrrQueue::Schedule()
 {
@@ -169,6 +106,11 @@ DrrQueue::Schedule()
     return p;
 }
 
+/**
+ * @brief Determines which traffic class should be scheduled next, based on the DRR policy.
+ *        Iterates over the queue in a round-robin manner and updates deficit counters.
+ * @return Index of the selected traffic class, or -1 if all queues are empty.
+ */
 uint32_t
 DrrQueue::GetQueueForSchedule() const
 {

@@ -77,11 +77,11 @@ StrictPriorityQueue::Classify(Ptr<Packet> p)
 }
 
 /**
- * @brief Select the next packet for transmission based on strict priority.
+ * @brief Schedules the next packet for transmission based on strict priority logic.
  *
- * Iterates over the traffic classes in descending priority and dequeues the first available packet.
+ * Always selects the first available packet from the highest-priority non-empty queue.
  *
- * @return Pointer to the selected packet, or nullptr if all queues are empty
+ * @return Pointer to the selected packet, or nullptr if no packet is available.
  */
 Ptr<Packet>
 StrictPriorityQueue::Schedule()
@@ -118,6 +118,13 @@ StrictPriorityQueue::AddTrafficClass(Ptr<TrafficClass> trafficClass)
               });
 }
 
+/**
+ * @brief Finds the index of the highest-priority non-empty traffic class.
+ *
+ * Used by the scheduler to determine which queue should be dequeued next.
+ *
+ * @return Index of the selected traffic class, or -1 if all queues are empty.
+ */
 uint32_t
 StrictPriorityQueue::GetQueueForSchedule() const
 {
